@@ -112,7 +112,8 @@ export const feeTable = pgTable('fee', {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
     // courseId: integer().references(() => courseTable.id, { onDelete: 'cascade' }).notNull().unique(), // Unique ensures 1:1 relationship
     // sessionId: integer().references(() => sessionTable.id, { onDelete: 'cascade' }).notNull(), // flexible fee for different sessions
-    courseSessionId: integer().references(() => courseSessionTable.id, { onDelete: 'cascade' }).notNull(),
+    // courseSessionId: integer().references(() => courseSessionTable.id, { onDelete: 'cascade' }).notNull(),
+    semesterId: integer().references(() => semesterTable.id, { onDelete: 'cascade' }).notNull(),
     institution: integer().notNull().default(0),
     university: integer().notNull().default(0),
     late: integer().notNull().default(0),
