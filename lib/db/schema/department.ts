@@ -2,7 +2,7 @@ import { sql } from "drizzle-orm";
 import { integer, pgTable, varchar, timestamp, boolean, date, check } from "drizzle-orm/pg-core";
 
 // Independent master table 
-export const sessionTable = pgTable('session', {
+export const academicSessionTable = pgTable('academic_session', {
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
     name: varchar({ length: 30 }).notNull().unique(), // review is latter / I want to generate it automatically like 2026-2030
     startDate: date().notNull(),
@@ -67,7 +67,7 @@ export const courseTable = pgTable('course', {
 export const courseSessionTable = pgTable('course_session',{
     id: integer().primaryKey().generatedAlwaysAsIdentity(),
     courseId: integer().references(() => courseTable.id, { onDelete: 'cascade' }).notNull(),
-    sessionId: integer().references(() => sessionTable.id, { onDelete: 'cascade' }).notNull(),
+    sessionId: integer().references(() => academicSessionTable.id, { onDelete: 'cascade' }).notNull(),
     createdAt: timestamp().defaultNow().notNull(),
     updatedAt: timestamp().defaultNow().notNull(),
 })
@@ -100,12 +100,6 @@ export const semesterSubjectTable = pgTable('semester_subject',{
     createdAt: timestamp().defaultNow().notNull(),
     updatedAt: timestamp().defaultNow().notNull(),
 });
-
-
-
-
-
-
 
 // points directly to the course 
 export const feeTable = pgTable('fee', {
