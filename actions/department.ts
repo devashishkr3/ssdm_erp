@@ -9,7 +9,9 @@ export async function fetchDepartments(): Promise<ReturnType>{
     try {
         const departments = await db.query.departmentTable.findMany();
         
-        if(!departments) return {success: false, message: "No departments found", data: [], statusCode: 404}
+        if(!departments) {
+            return {success: false, message: "No departments found", data: null, statusCode: 404}
+        }
 
         return {
             success: true,
