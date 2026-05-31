@@ -9,7 +9,6 @@ export const addSubjectSchema = z.object({
   code: z.string().min(1, { message: "Subject code is required" }),
   type: z.enum(SUBJECT_TYPES),
   hasPractical: z.boolean().default(false),
-  practicalFee: z.number().optional().nullable(),
 });
 
 export const updateSubjectSchema = z.object({
@@ -18,7 +17,6 @@ export const updateSubjectSchema = z.object({
   code: z.string().min(1, { message: "Subject code is required" }),
   type: z.enum(SUBJECT_TYPES),
   hasPractical: z.boolean().default(false),
-  practicalFee: z.number().optional().nullable(),
   isActive: z.boolean().default(true),
 });
 

@@ -35,8 +35,8 @@ export const columns: ColumnDef<SubjectRow>[] = [
         VAC: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
       };
       return (
-        <Badge className={typeColors[row.original.type]}>
-          {row.original.type}
+        <Badge className={row.original.type ? typeColors[row.original.type] : "bg-gray-100 text-gray-800"}>
+          {row.original.type || "N/A"}
         </Badge>
       );
     },

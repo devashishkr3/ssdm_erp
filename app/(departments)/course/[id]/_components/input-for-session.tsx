@@ -24,7 +24,7 @@ export const InputForSession = ({ form }: { form: UseFormReturn<NewSessionType> 
         name="name"
         render={({ field, fieldState }) => (
           <Field>
-            <FieldLabel requiredLable>Name</FieldLabel>
+            <FieldLabel required>Name</FieldLabel>
             <FieldContent>
               <Input {...field} aria-invalid={fieldState.invalid} />
               <FieldError errors={[fieldState.error]} />
@@ -38,7 +38,7 @@ export const InputForSession = ({ form }: { form: UseFormReturn<NewSessionType> 
         name="startDate"
         render={({ field, fieldState }) => (
           <Field>
-            <FieldLabel requiredLable>Start Date</FieldLabel>
+            <FieldLabel required>Start Date</FieldLabel>
             <FieldContent>
               <Popover open={openStart} onOpenChange={setOpenStart}>
                 <PopoverTrigger asChild>
@@ -75,7 +75,7 @@ export const InputForSession = ({ form }: { form: UseFormReturn<NewSessionType> 
         name="endDate"
         render={({ field, fieldState }) => (
           <Field>
-            <FieldLabel requiredLable>End Date</FieldLabel>
+            <FieldLabel required>End Date</FieldLabel>
             <FieldContent>
               <Popover open={openEnd} onOpenChange={setOpenEnd}>
                 <PopoverTrigger asChild>

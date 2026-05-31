@@ -15,9 +15,7 @@ export const AddSubject = () => {
     defaultValues: {
       name: "",
       code: "",
-      description: "",
       hasPractical: false,
-      practicalFee: 0,
       //   isActive: true,
     }
   })

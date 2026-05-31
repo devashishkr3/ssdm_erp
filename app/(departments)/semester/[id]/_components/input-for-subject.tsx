@@ -13,7 +13,7 @@ export const InputForSubject = ({ form }: { form: UseFormReturn<NewSubjectType> 
                 name="name"
                 render={({ field, fieldState }) => (
                     <Field>
-                        <FieldLabel requiredLable>Name</FieldLabel>
+                        <FieldLabel required>Name</FieldLabel>
                         <FieldContent>
                             <Input {...field} aria-invalid={fieldState.invalid} />
                             <FieldError errors={[fieldState.error]} />
@@ -28,7 +28,7 @@ export const InputForSubject = ({ form }: { form: UseFormReturn<NewSubjectType> 
                 name="code"
                 render={({ field, fieldState }) => (
                     <Field>
-                        <FieldLabel requiredLable>Code</FieldLabel>
+                        <FieldLabel required>Code</FieldLabel>
                         <FieldContent>
                             <Input {...field} aria-invalid={fieldState.invalid} />
                             <FieldError errors={[fieldState.error]} />
@@ -39,20 +39,6 @@ export const InputForSubject = ({ form }: { form: UseFormReturn<NewSubjectType> 
 
 
 
-
-            <Controller
-                control={form.control}
-                name="description"
-                render={({ field, fieldState }) => (
-                    <Field>
-                        <FieldLabel requiredLable>Description</FieldLabel>
-                        <FieldContent>
-                            <Input {...field} aria-invalid={fieldState.invalid} />
-                            <FieldError errors={[fieldState.error]} />
-                        </FieldContent>
-                    </Field>
-                )}
-            />
 
             <div className="flex w-full justify-between items-center">
 
@@ -61,25 +47,9 @@ export const InputForSubject = ({ form }: { form: UseFormReturn<NewSubjectType> 
                     name="hasPractical"
                     render={({ field: { value, onChange, ...rest }, fieldState }) => (
                         <Field>
-                            <FieldLabel requiredLable>Has Practiclal</FieldLabel>
+                            <FieldLabel required>Has Practiclal</FieldLabel>
                             <FieldContent>
                                 <Switch checked={value} onCheckedChange={onChange} {...rest} aria-invalid={fieldState.invalid} />
-                                <FieldError errors={[fieldState.error]} />
-                            </FieldContent>
-                        </Field>
-                    )}
-                />
-
-
-
-                <Controller
-                    control={form.control}
-                    name="practicalFee"
-                    render={({ field, fieldState }) => (
-                        <Field>
-                            <FieldLabel requiredLable>Fee</FieldLabel>
-                            <FieldContent>
-                                <Input type="number" {...field} onChange={(e) => { const v = e.target.valueAsNumber; field.onChange(isNaN(v) ? undefined : v); }} aria-invalid={fieldState.invalid} />
                                 <FieldError errors={[fieldState.error]} />
                             </FieldContent>
                         </Field>

@@ -15,7 +15,7 @@ export const InputForCourse = ({form}: {form: UseFormReturn<NewCourseType>})=>{
                     name="name"
                     render={({ field, fieldState }) => (
                       <Field>
-                        <FieldLabel requiredLable>Name</FieldLabel>
+                        <FieldLabel required>Name</FieldLabel>
                         <FieldContent>
                           <Input {...field} aria-invalid={fieldState.invalid} />
                           <FieldError errors={[fieldState.error]} />
@@ -29,7 +29,7 @@ export const InputForCourse = ({form}: {form: UseFormReturn<NewCourseType>})=>{
                     name="code"
                     render={({ field, fieldState }) => (
                       <Field>
-                        <FieldLabel requiredLable>Code</FieldLabel>
+                        <FieldLabel required>Code</FieldLabel>
                         <FieldContent>
                           <Input {...field} aria-invalid={fieldState.invalid} />
                           <FieldError errors={[fieldState.error]} />
@@ -44,7 +44,7 @@ export const InputForCourse = ({form}: {form: UseFormReturn<NewCourseType>})=>{
                     name="description"
                     render={({ field, fieldState }) => (
                       <Field>
-                        <FieldLabel requiredLable>Description</FieldLabel>
+                        <FieldLabel required>Description</FieldLabel>
                         <FieldContent>
                           <Input {...field} aria-invalid={fieldState.invalid} />
                           <FieldError errors={[fieldState.error]} />
@@ -59,7 +59,7 @@ export const InputForCourse = ({form}: {form: UseFormReturn<NewCourseType>})=>{
                     name="type"
                     render={({ field, fieldState }) => (
                       <Field>
-                        <FieldLabel requiredLable>Type</FieldLabel>
+                        <FieldLabel required>Type</FieldLabel>
                         <FieldContent>
                           {/* <Input {...field} aria-invalid={fieldState.invalid} /> */}
                           <Select {...field} onValueChange={field.onChange} defaultValue={field.value} >
@@ -87,7 +87,7 @@ export const InputForCourse = ({form}: {form: UseFormReturn<NewCourseType>})=>{
                     name="duration"
                     render={({ field, fieldState }) => (
                       <Field>
-                        <FieldLabel requiredLable>Duration</FieldLabel>
+                        <FieldLabel required>Duration</FieldLabel>
                         <FieldContent>
                           <Input {...field} aria-invalid={fieldState.invalid} />
                           <FieldError errors={[fieldState.error]} />

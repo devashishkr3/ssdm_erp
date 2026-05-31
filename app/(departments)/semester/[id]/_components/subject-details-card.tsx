@@ -20,7 +20,6 @@ export const SubjectDetails = ({ subject }: { subject: typeof subjectTable.$infe
 
                 <div className="flex justify-between items-center">
                     <CardDescription>Practical: {subject.hasPractical ? "Yes" : "No"}</CardDescription>
-                    {subject.hasPractical && <CardDescription>Practical Fee: {subject.practicalFee}</CardDescription>}
                     <CardDescription>
                         {
                             subject.isActive ?
@@ -34,8 +33,6 @@ export const SubjectDetails = ({ subject }: { subject: typeof subjectTable.$infe
                         }
                     </CardDescription>
                 </div>
-                
-                <CardDescription className="mt-4">{subject.description}</CardDescription>
             </CardContent>
         </Card>
     )

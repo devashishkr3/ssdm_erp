@@ -18,7 +18,7 @@ export function InputForDepartment({
             name="name"
             render={({ field, fieldState }) => (
               <Field>
-                <FieldLabel requiredLable>Name</FieldLabel>
+                <FieldLabel required>Name</FieldLabel>
                 <FieldContent>
                   <Input {...field} aria-invalid={fieldState.invalid} />
                   <FieldError errors={[fieldState.error]} />
@@ -32,7 +32,7 @@ export function InputForDepartment({
             name="code"
             render={({ field, fieldState }) => (
               <Field>
-                <FieldLabel requiredLable>Code</FieldLabel>
+                <FieldLabel required>Code</FieldLabel>
                 <FieldContent>
                   <Input {...field} aria-invalid={fieldState.invalid} />
                   <FieldError errors={[fieldState.error]} />
@@ -47,7 +47,7 @@ export function InputForDepartment({
             name="description"
             render={({ field, fieldState }) => (
               <Field>
-                <FieldLabel requiredLable>Description</FieldLabel>
+                <FieldLabel required>Description</FieldLabel>
                 <FieldContent>
                   <Input {...field} aria-invalid={fieldState.invalid} />
                   <FieldError errors={[fieldState.error]} />

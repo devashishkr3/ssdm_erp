@@ -13,7 +13,7 @@ export const InputForFee = ({ form }: { form: UseFormReturn<NewFeeType> }) => {
                     name="institution"
                     render={({ field, fieldState }) => (
                         <Field>
-                            <FieldLabel requiredLable>Institution Fee</FieldLabel>
+                            <FieldLabel required>Institution Fee</FieldLabel>
                             <FieldContent>
                                 <Input type="number" {...field} onChange={(e) => { const v = e.target.valueAsNumber; field.onChange(isNaN(v) ? undefined : v); }} aria-invalid={fieldState.invalid} />
                                 <FieldError errors={[fieldState.error]} />
@@ -27,7 +27,7 @@ export const InputForFee = ({ form }: { form: UseFormReturn<NewFeeType> }) => {
                     name="university"
                     render={({ field, fieldState }) => (
                         <Field>
-                            <FieldLabel requiredLable>University Fee</FieldLabel>
+                            <FieldLabel required>University Fee</FieldLabel>
                             <FieldContent>
                                 <Input type="number" {...field} onChange={(e) => { const v = e.target.valueAsNumber; field.onChange(isNaN(v) ? undefined : v); }} aria-invalid={fieldState.invalid} />
                                 <FieldError errors={[fieldState.error]} />
@@ -43,7 +43,7 @@ export const InputForFee = ({ form }: { form: UseFormReturn<NewFeeType> }) => {
                     name="late"
                     render={({ field, fieldState }) => (
                         <Field>
-                            <FieldLabel requiredLable>Late Fee</FieldLabel>
+                            <FieldLabel required>Late Fee</FieldLabel>
                             <FieldContent>
                                 <Input type="number" {...field} onChange={(e) => { const v = e.target.valueAsNumber; field.onChange(isNaN(v) ? undefined : v); }} aria-invalid={fieldState.invalid} />
                                 <FieldError errors={[fieldState.error]} />
@@ -57,7 +57,7 @@ export const InputForFee = ({ form }: { form: UseFormReturn<NewFeeType> }) => {
                     name="practical"
                     render={({ field, fieldState }) => (
                         <Field>
-                            <FieldLabel requiredLable>Practical Fee</FieldLabel>
+                            <FieldLabel required>Practical Fee</FieldLabel>
                             <FieldContent>
                                 <Input type="number" {...field} onChange={(e) => { const v = e.target.valueAsNumber; field.onChange(isNaN(v) ? undefined : v); }} aria-invalid={fieldState.invalid} />
                                 <FieldError errors={[fieldState.error]} />
@@ -73,7 +73,7 @@ export const InputForFee = ({ form }: { form: UseFormReturn<NewFeeType> }) => {
                     name="cultural"
                     render={({ field, fieldState }) => (
                         <Field>
-                            <FieldLabel requiredLable>Cultural Fee</FieldLabel>
+                            <FieldLabel required>Cultural Fee</FieldLabel>
                             <FieldContent>
                                 <Input type="number" {...field} onChange={(e) => { const v = e.target.valueAsNumber; field.onChange(isNaN(v) ? undefined : v); }} aria-invalid={fieldState.invalid} />
                                 <FieldError errors={[fieldState.error]} />
@@ -87,7 +87,7 @@ export const InputForFee = ({ form }: { form: UseFormReturn<NewFeeType> }) => {
                     name="sports"
                     render={({ field, fieldState }) => (
                         <Field>
-                            <FieldLabel requiredLable>Sports Fee</FieldLabel>
+                            <FieldLabel required>Sports Fee</FieldLabel>
                             <FieldContent>
                                 <Input type="number" {...field} onChange={(e) => { const v = e.target.valueAsNumber; field.onChange(isNaN(v) ? undefined : v); }} aria-invalid={fieldState.invalid} />
                                 <FieldError errors={[fieldState.error]} />
@@ -103,7 +103,7 @@ export const InputForFee = ({ form }: { form: UseFormReturn<NewFeeType> }) => {
                 name="miscellaneous"
                 render={({ field, fieldState }) => (
                     <Field>
-                        <FieldLabel requiredLable>Miscellaneous Fee</FieldLabel>
+                        <FieldLabel required>Miscellaneous Fee</FieldLabel>
                         <FieldContent>
                             <Input type="number" {...field} onChange={(e) => { const v = e.target.valueAsNumber; field.onChange(isNaN(v) ? undefined : v); }} aria-invalid={fieldState.invalid} />
                             <FieldError errors={[fieldState.error]} />

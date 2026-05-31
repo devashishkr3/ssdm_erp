@@ -40,19 +40,13 @@ export function AddSubjectSheet() {
   const addSubject = useAddSubject();
 
   const form = useForm<AddSubjectSchema>({
-    resolver: zodResolver(addSubjectSchema),
+    resolver: zodResolver(addSubjectSchema) as never,
     defaultValues: {
       name: "",
       code: "",
       type: "MJC",
       hasPractical: false,
-      practicalFee: undefined,
     },
-  });
-
-  const hasPractical = useWatch({
-    control: form.control,
-    name: "hasPractical",
   });
 
   async function onSubmit(values: AddSubjectSchema) {
@@ -62,7 +56,6 @@ export function AddSubjectSheet() {
       code: "",
       type: "MJC",
       hasPractical: false,
-      practicalFee: undefined,
     });
     setOpen(false);
   }
@@ -75,7 +68,7 @@ export function AddSubjectSheet() {
           Add Subject
         </Button>
       </SheetTrigger>
-      <SheetContent side="right" className="w-full sm:w-[700px] lg:w-[800px] px-6">
+      <SheetContent side="right">
         <form
           onSubmit={form.handleSubmit(onSubmit)}
           className="flex flex-col gap-6 h-full"
@@ -87,122 +80,110 @@ export function AddSubjectSheet() {
             </SheetDescription>
           </SheetHeader>
 
-          <FieldGroup className="flex-1 overflow-y-auto">
-            <Controller
-              control={form.control}
-              name="name"
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel>Subject Name</FieldLabel>
-                  <FieldContent>
-                    <Input
-                      placeholder="e.g. Physics"
-                      {...field}
-                      aria-invalid={fieldState.invalid}
-                    />
-                    <FieldError errors={[fieldState.error]} />
-                  </FieldContent>
-                </Field>
-              )}
-            />
-
-            <Controller
-              control={form.control}
-              name="code"
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel>Subject Code</FieldLabel>
-                  <FieldContent>
-                    <Input
-                      placeholder="e.g. PHY101"
-                      {...field}
-                      aria-invalid={fieldState.invalid}
-                    />
-                    <FieldError errors={[fieldState.error]} />
-                  </FieldContent>
-                </Field>
-              )}
-            />
-
-            <Controller
-              control={form.control}
-              name="type"
-              render={({ field, fieldState }) => (
-                <Field data-invalid={fieldState.invalid}>
-                  <FieldLabel>Subject Type</FieldLabel>
-                  <FieldContent>
-                    <NativeSelect
-                      value={field.value}
-                      onChange={field.onChange}
-                      aria-invalid={fieldState.invalid}
-                      className="w-full"
-                    >
-                      {SUBJECT_TYPES.map((type) => (
-                        <NativeSelectOption key={type} value={type}>
-                          {type}
-                        </NativeSelectOption>
-                      ))}
-                    </NativeSelect>
-                    <FieldError errors={[fieldState.error]} />
-                  </FieldContent>
-                </Field>
-              )}
-            />
-
-            <Controller
-              control={form.control}
-              name="hasPractical"
-              render={({ field }) => (
-                <Field orientation="horizontal">
-                  <Switch
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                  <FieldLabel className="!mt-0">Has Practical?</FieldLabel>
-                </Field>
-              )}
-            />
-
-            {hasPractical && (
+          <div className="grid flex-1 auto-rows-min gap-6 px-4">
+            <div className="grid gap-3">
               <Controller
                 control={form.control}
-                name="practicalFee"
+                name="name"
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel>Practical Fee</FieldLabel>
+                    <FieldLabel>Subject Name</FieldLabel>
                     <FieldContent>
                       <Input
-                        type="number"
-                        placeholder="Enter practical fee"
-                        value={field.value ?? ""}
-                        onChange={(e) =>
-                          field.onChange(
-                            e.target.value ? Number(e.target.value) : null,
-                          )
-                        }
+                        placeholder="e.g. Physics"
+                        {...field}
                         aria-invalid={fieldState.invalid}
                       />
-                      <FieldError errors={[fieldState.error]} />
+                      <FieldError
+                        errors={[
+                          fieldState.error,
+                        ]}
+                      />
                     </FieldContent>
                   </Field>
                 )}
               />
-            )}
 
-            {addSubject.error ? (
-              <FieldError>{addSubject.error.message}</FieldError>
-            ) : null}
-          </FieldGroup>
+              <Controller
+                control={form.control}
+                name="code"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel>Subject Code</FieldLabel>
+                    <FieldContent>
+                      <Input
+                        placeholder="e.g. PHY101"
+                        {...field}
+                        aria-invalid={fieldState.invalid}
+                      />
+                      <FieldError
+                        errors={[
+                          fieldState.error,
+                        ]}
+                      />
+                    </FieldContent>
+                  </Field>
+                )}
+              />
+
+              <Controller
+                control={form.control}
+                name="type"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel>Subject Type</FieldLabel>
+                    <FieldContent>
+                      <NativeSelect
+                        value={field.value}
+                        onChange={field.onChange}
+                        aria-invalid={fieldState.invalid}
+                        className="w-full"
+                      >
+                        {SUBJECT_TYPES.map((type) => (
+                          <NativeSelectOption key={type} value={type}>
+                            {type}
+                          </NativeSelectOption>
+                        ))}
+                      </NativeSelect>
+                      <FieldError
+                        errors={[
+                          fieldState.error,
+                        ]}
+                      />
+                    </FieldContent>
+                  </Field>
+                )}
+              />
+
+              <Controller
+                control={form.control}
+                name="hasPractical"
+                render={({ field }) => (
+                  <Field orientation="horizontal">
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                    <FieldLabel className="!mt-0">Has Practical?</FieldLabel>
+                  </Field>
+                )}
+              />
+            </div>
+          </div>
+
+          {addSubject.error ? (
+            <FieldError>{addSubject.error.message}</FieldError>
+          ) : null}
 
           <SheetFooter>
+            <Button type="submit" disabled={form.formState.isSubmitting}>
+              {form.formState.isSubmitting ? "Saving..." : "Save"}
+            </Button>
             <SheetClose asChild>
               <Button type="button" variant="outline">
                 Cancel
               </Button>
             </SheetClose>
-            <Button type="submit" disabled={form.formState.isSubmitting}>
-              {form.formState.isSubmitting ? "Saving..." : "Save"}
-            </Button>
           </SheetFooter>
         </form>
       </SheetContent>
