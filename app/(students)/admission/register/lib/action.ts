@@ -1,16 +1,51 @@
 'use server'
 
 import { db } from "@/lib/db"
-import { EnrolledStudentTable } from "@/lib/db/schema/student"
+import { AdmittedStudentTable, EnrolledStudentTable } from "@/lib/db/schema/student"
 import { and, eq } from "drizzle-orm"
 
-export const fetchEnrolledStudent = async ({UAN, sessionId, courseId}: {UAN: string, sessionId: string, courseId: string})=>{
+export const fetchEnrolledStudent = async ({ UAN, batch }: { UAN: string, batch: string }) => {
   try {
-    const student = await db.query.EnrolledStudentTable.findFirst({
-      where: and(eq(EnrolledStudentTable.UAN, UAN), eq(EnrolledStudentTable.courseSessionId, sessionId), eq(EnrolledStudentTable.courseId, courseId))
+
+    const existingStudent = await db.query.AdmittedStudentTable.findFirst({
+      where: eq(AdmittedStudentTable.UAN, UAN)
     })
 
-    if(!student){
+    if (existingStudent) {
+      return {
+        success: false,
+        message: "Student already take their admission"
+      }
+    }
+
+    const student = await db.query.EnrolledStudentTable.findFirst({
+      where: and(eq(EnrolledStudentTable.UAN, UAN), eq(EnrolledStudentTable.batchId, batch)),
+      with: {
+        courseSession: {
+          with: {
+            course: {
+              with: {
+                department: true,
+              },
+            },
+            session: true,
+            semesters: {
+              with: {
+                semesterSubjects: {
+                  with: {
+                    subject: true,
+                  }
+                }
+              }
+            },
+          },
+        },
+      },
+    })
+
+
+
+    if (!student) {
       return {
         success: false,
         message: "Student not found"
@@ -30,4 +65,4 @@ export const fetchEnrolledStudent = async ({UAN, sessionId, courseId}: {UAN: str
       error: error
     }
   }
-}
+}

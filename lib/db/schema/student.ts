@@ -175,3 +175,84 @@ export const StudentRemarkTable = pgTable('student_remark', {
       sql`${table.importance} IN ('Low', 'Medium', 'High', 'Critical')`,
     ),
   ],)
+
+// ─── STUDENT RELATIONS ─────────────────────────────────────────────────────────
+
+// ENROLLED STUDENT RELATIONS
+
+export const enrolledStudentRelations = relations(EnrolledStudentTable, ({ one }) => ({
+  courseSession: one(courseSessionTable, {
+    fields: [EnrolledStudentTable.batchId],
+    references: [courseSessionTable.id],
+  }),
+}));
+
+// ADMITTED STUDENT RELATIONS
+
+export const admittedStudentRelations = relations(AdmittedStudentTable, ({ one, many }) => ({
+  currentSemester: one(semesterTable, {
+    fields: [AdmittedStudentTable.currentSemesterId],
+    references: [semesterTable.id],
+  }),
+
+  previousAcademicRecord: one(StudentPreviousAcademicRecordTable),
+
+  documents: one(StudentDocumentsTable),
+
+  feePayments: many(StudentFeePaymentTable),
+
+  remarks: many(StudentRemarkTable),
+}));
+
+// STUDENT PREVIOUS ACADEMIC RECORD RELATIONS
+
+export const studentPreviousAcademicRecordRelations = relations(
+  StudentPreviousAcademicRecordTable,
+  ({ one }) => ({
+    student: one(AdmittedStudentTable, {
+      fields: [StudentPreviousAcademicRecordTable.studentId],
+      references: [AdmittedStudentTable.id],
+    }),
+  }),
+);
+
+// STUDENT DOCUMENTS RELATIONS
+
+export const studentDocumentsRelations = relations(
+  StudentDocumentsTable,
+  ({ one }) => ({
+    student: one(AdmittedStudentTable, {
+      fields: [StudentDocumentsTable.studentId],
+      references: [AdmittedStudentTable.id],
+    }),
+  }),
+);
+
+// STUDENT FEE PAYMENT RELATIONS
+
+export const studentFeePaymentRelations = relations(
+  StudentFeePaymentTable,
+  ({ one }) => ({
+    student: one(AdmittedStudentTable, {
+      fields: [StudentFeePaymentTable.studentId],
+      references: [AdmittedStudentTable.id],
+    }),
+
+    semester: one(semesterTable, {
+      fields: [StudentFeePaymentTable.semesterId],
+      references: [semesterTable.id],
+    }),
+  }),
+);
+
+// STUDENT REMARK RELATIONS
+
+export const studentRemarkRelations = relations(
+  StudentRemarkTable,
+  ({ one }) => ({
+    student: one(AdmittedStudentTable, {
+      fields: [StudentRemarkTable.studentId],
+      references: [AdmittedStudentTable.id],
+    }),
+  }),
+);

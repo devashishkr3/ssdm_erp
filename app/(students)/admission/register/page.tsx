@@ -14,18 +14,17 @@ export default async function RegisterStudents({ searchParams }: PageProps){
 
   // Await the searchParams promise to extract the parameters
   const resolvedParams = await searchParams;
-  const sessionId = resolvedParams.sessionId as string;
-  const courseId = resolvedParams.courseId as string;
-  const UAN = resolvedParams.UAN as string; // Assuming UAN also comes from the query
+  const batch = resolvedParams.batch as string;
+  const UAN = resolvedParams.uan as string; // Assuming UAN also comes from the query
 
   const queryClient = new QueryClient();
 
-  await queryClient.prefetchQuery(getEnrolledStudent({UAN, sessionId, courseId}));
+  await queryClient.prefetchQuery(getEnrolledStudent({UAN, batch}));
 
   return (
     <HydrationBoundary state={dehydrate(queryClient)}>
       {/* <Register /> */}
-      <StudentRegistration UAN={UAN} sessionId={sessionId} courseId={courseId} />
+      <StudentRegistration UAN={UAN} batch={batch}  />
     </HydrationBoundary>
   )
 } 

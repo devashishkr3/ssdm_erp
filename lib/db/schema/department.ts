@@ -1,4 +1,5 @@
 import { relations, sql } from "drizzle-orm";
+import { EnrolledStudentTable } from "./student";
 import {
   boolean,
   check,
@@ -266,6 +267,8 @@ export const courseSessionRelations = relations(
     batches: many(batchTable),
 
     semesters: many(semesterTable),
+
+    enrolledStudents: many(EnrolledStudentTable),
   }),
 );
 
