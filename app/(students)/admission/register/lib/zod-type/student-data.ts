@@ -25,6 +25,10 @@ export const studentDataZodSchema = z.object({
   caste: z.string().min(1, "Caste is required"),
   reservation: z.string().optional(),
   isMinority: z.boolean(),
+  city: z.string().min(1, "City is required"),
+  district: z.string().min(1, "District is required"),
+  state: z.string().min(1, "State is required"),
+  pinCode: z.string().length(6, "PIN Code must be exactly 6 digits"),
 
   // --- Academic ---
   batch: z.string().min(1, "Batch is required"),

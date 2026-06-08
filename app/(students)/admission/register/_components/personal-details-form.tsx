@@ -32,20 +32,7 @@ export const PersonalDetailsForm = ({ form }: { form: UseFormReturn<StudentDataT
     enabled: !!batch && !!UAN && !!MJC,
   });
 
-  const avatarFile = form.watch("avatar")
-  const [avatarUrl, setAvatarUrl] = useState<string>("")
 
-  useEffect(() => {
-    if (avatarFile instanceof File) {
-      const url = URL.createObjectURL(avatarFile)
-      setAvatarUrl(url)
-      return () => URL.revokeObjectURL(url)
-    } else if (typeof avatarFile === "string" && avatarFile !== "") {
-      setAvatarUrl(avatarFile)
-    } else {
-      setAvatarUrl("")
-    }
-  }, [avatarFile])
 
   useEffect(() => {
     if (data) {
@@ -550,25 +537,27 @@ export const PersonalDetailsForm = ({ form }: { form: UseFormReturn<StudentDataT
               />
 
               {/* University Roll */}
-              <Controller
-                control={form.control}
-                name="universityRoll"
-                render={({ field, fieldState }) => (
-                  <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel>University Roll Number</FieldLabel>
-                    <FieldContent>
-                      <Input 
-                        {...field} 
-                        value={field.value ?? ""}
-                        aria-invalid={fieldState.invalid} 
-                        className="bg-emerald-500/5 dark:bg-emerald-950/10 border-emerald-500/20 focus-visible:border-emerald-500 focus-visible:ring-emerald-500/20"
-                        placeholder="Enter University Roll Number" 
-                      />
-                      <FieldError errors={[fieldState.error]} />
-                    </FieldContent>
-                  </Field>
-                )}
-              />
+              {data?.universityRoll && (
+                <Controller
+                  control={form.control}
+                  name="universityRoll"
+                  render={({ field, fieldState }) => (
+                    <Field data-invalid={fieldState.invalid}>
+                      <FieldLabel>University Roll Number</FieldLabel>
+                      <FieldContent>
+                        <Input 
+                          {...field} 
+                          value={field.value ?? ""}
+                          aria-invalid={fieldState.invalid} 
+                          className="bg-emerald-500/5 dark:bg-emerald-950/10 border-emerald-500/20 focus-visible:border-emerald-500 focus-visible:ring-emerald-500/20"
+                          placeholder="Enter University Roll Number" 
+                        />
+                        <FieldError errors={[fieldState.error]} />
+                      </FieldContent>
+                    </Field>
+                  )}
+                />
+              )}
 
             </div>
           </div>
@@ -607,6 +596,87 @@ export const PersonalDetailsForm = ({ form }: { form: UseFormReturn<StudentDataT
                         <option value="Jain">Jain</option>
                         <option value="Other">Other</option>
                       </select>
+                      <FieldError errors={[fieldState.error]} />
+                    </FieldContent>
+                  </Field>
+                )}
+              />
+
+              {/* City */}
+              <Controller
+                control={form.control}
+                name="city"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel requiredLable>City</FieldLabel>
+                    <FieldContent>
+                      <Input 
+                        {...field} 
+                        value={field.value ?? ""}
+                        aria-invalid={fieldState.invalid} 
+                        placeholder="Enter City" 
+                      />
+                      <FieldError errors={[fieldState.error]} />
+                    </FieldContent>
+                  </Field>
+                )}
+              />
+
+              {/* District */}
+              <Controller
+                control={form.control}
+                name="district"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel requiredLable>District</FieldLabel>
+                    <FieldContent>
+                      <Input 
+                        {...field} 
+                        value={field.value ?? ""}
+                        aria-invalid={fieldState.invalid} 
+                        placeholder="Enter District" 
+                      />
+                      <FieldError errors={[fieldState.error]} />
+                    </FieldContent>
+                  </Field>
+                )}
+              />
+
+              {/* State */}
+              <Controller
+                control={form.control}
+                name="state"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel requiredLable>State</FieldLabel>
+                    <FieldContent>
+                      <Input 
+                        {...field} 
+                        value={field.value ?? ""}
+                        aria-invalid={fieldState.invalid} 
+                        placeholder="Enter State" 
+                      />
+                      <FieldError errors={[fieldState.error]} />
+                    </FieldContent>
+                  </Field>
+                )}
+              />
+
+              {/* PIN Code */}
+              <Controller
+                control={form.control}
+                name="pinCode"
+                render={({ field, fieldState }) => (
+                  <Field data-invalid={fieldState.invalid}>
+                    <FieldLabel requiredLable>PIN Code</FieldLabel>
+                    <FieldContent>
+                      <Input 
+                        maxLength={6}
+                        {...field} 
+                        value={field.value ?? ""}
+                        aria-invalid={fieldState.invalid} 
+                        placeholder="6-digit PIN Code" 
+                      />
                       <FieldError errors={[fieldState.error]} />
                     </FieldContent>
                   </Field>
@@ -673,41 +743,7 @@ export const PersonalDetailsForm = ({ form }: { form: UseFormReturn<StudentDataT
                 )}
               />
 
-              {/* Profile Photo (Avatar) - Linked from Documents */}
-              <Field className="flex flex-col gap-2 p-4 bg-muted/20 border border-input/30 rounded-2xl">
-                <FieldLabel className="text-sm font-semibold">Profile Photo (Avatar)</FieldLabel>
-                <FieldContent className="flex flex-row items-center gap-4 pt-1.5">
-                  <div className="relative h-16 w-16 rounded-full overflow-hidden border border-input bg-muted flex items-center justify-center shrink-0 shadow-inner">
-                    {avatarUrl ? (
-                      <img src={avatarUrl} alt="Student Avatar" className="h-full w-full object-cover" />
-                    ) : (
-                      <User className="h-8 w-8 text-muted-foreground" />
-                    )}
-                  </div>
-                  <div className="space-y-1">
-                    {avatarFile ? (
-                      <>
-                        <span className="text-xs font-semibold text-emerald-600 flex items-center gap-1">
-                          <CheckCircle2 className="h-3.5 w-3.5" />
-                          Linked from Documents
-                        </span>
-                        <span className="text-xs text-muted-foreground block truncate max-w-[180px]">
-                          {avatarFile.name || "photograph.png"}
-                        </span>
-                      </>
-                    ) : (
-                      <>
-                        <span className="text-xs font-medium text-amber-600 block">
-                          Waiting for upload...
-                        </span>
-                        <span className="text-xs text-muted-foreground block leading-tight">
-                          Upload your Passport Size Photograph in the Documents section below to link it automatically.
-                        </span>
-                      </>
-                    )}
-                  </div>
-                </FieldContent>
-              </Field>
+
 
               {/* Minority Status */}
               <Controller
