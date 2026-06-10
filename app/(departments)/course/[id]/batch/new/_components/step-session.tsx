@@ -1,8 +1,8 @@
 "use client";
 
-import { Controller } from "react-hook-form";
-import type { UseFormReturn } from "react-hook-form";
+import { Controller, type UseFormReturn } from "react-hook-form";
 import { CalendarIcon } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import {
   Field,
   FieldContent,
@@ -13,67 +13,65 @@ import {
   NativeSelect,
   NativeSelectOption,
 } from "@/components/ui/native-select";
-import { Badge } from "@/components/ui/badge";
-import { useGetAcademicSessions } from "@/app/(departments)/academic-session/query/get-academic-session";
+import type { NewBatchSchema } from "../lib/zod-type/new-batch-type";
 
-interface Step2Props {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  form: UseFormReturn<any>;
+interface StepSessionProps {
+  form: UseFormReturn<NewBatchSchema>;
   semesterLabels: string[];
+  /** Available sessions — already filtered (used sessions excluded) server-side */
+  availableSessions: { id: string; name: string; isActive: boolean }[];
 }
 
-export function Step2Session({ form, semesterLabels }: Step2Props) {
-  const {
-    data: sessions = [],
-    isPending,
-    isError,
-    error,
-  } = useGetAcademicSessions();
-
+export function StepSession({
+  form,
+  semesterLabels,
+  availableSessions,
+}: StepSessionProps) {
   return (
     <div className="flex flex-col gap-6">
       <Controller
         control={form.control}
-        name="session.sessionId"
+        name="sessionId"
         render={({ field, fieldState }) => (
-          <Field data-invalid={fieldState.invalid || isError}>
+          <Field data-invalid={fieldState.invalid}>
             <FieldLabel required>Academic Session</FieldLabel>
             <FieldContent>
               <NativeSelect
-                value={field.value ?? ""}
+                value={field.value}
                 onChange={field.onChange}
-                aria-invalid={fieldState.invalid || isError}
+                aria-invalid={fieldState.invalid}
                 className="w-full"
-                disabled={isPending || isError}
+                disabled={availableSessions.length === 0}
               >
                 <NativeSelectOption value="">
-                  Select session…
+                  {availableSessions.length === 0
+                    ? "No available sessions"
+                    : "Select session…"}
                 </NativeSelectOption>
-                {sessions.map((s) => (
+                {availableSessions.map((s) => (
                   <NativeSelectOption key={s.id} value={s.id}>
                     {s.name}
                     {s.isActive ? " (Active)" : ""}
                   </NativeSelectOption>
                 ))}
               </NativeSelect>
-              <FieldError
-                errors={[
-                  fieldState.error,
-                  isError
-                    ? { message: error?.message ?? "Failed to load sessions" }
-                    : undefined,
-                ]}
-              />
+              <FieldError errors={[fieldState.error]} />
             </FieldContent>
           </Field>
         )}
       />
 
-      {/* Batch summary */}
+      {availableSessions.length === 0 && (
+        <p className="text-xs text-destructive">
+          All academic sessions have been used for this course.
+        </p>
+      )}
+
+      {/* Semester preview */}
       <div className="rounded-xl border border-dashed bg-muted/30 p-4 flex flex-col gap-3">
         <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
           <CalendarIcon className="size-3" />
-          Batch will generate these semesters
+          Semesters that will be created
         </div>
         <div className="flex flex-wrap gap-1.5">
           {semesterLabels.map((label) => (
@@ -81,13 +79,9 @@ export function Step2Session({ form, semesterLabels }: Step2Props) {
               {label}
             </Badge>
           ))}
-          {semesterLabels.length === 0 && (
-            <span className="text-xs text-muted-foreground">
-              Set duration in Step 1 to preview semesters
-            </span>
-          )}
         </div>
       </div>
     </div>
   );
 }
+
