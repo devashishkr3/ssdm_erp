@@ -215,7 +215,27 @@ export async function registerStudent(payload: RegisterStudentPayload) {
       return admittedStudent
     })
 
-    return { success: true as const, data }
+    // 4. Check if any assigned subject has hasPractical = true
+    const allSubjectIds = [
+      personal.subMJC,
+      ...personal.subMIC,
+      ...personal.subMDC,
+      ...personal.subAEC,
+      ...personal.subSEC,
+      ...personal.subVAC,
+    ].filter(Boolean)
+
+    let hasPractical = false
+    if (allSubjectIds.length > 0) {
+      const subjects = await db
+        .select({ hasPractical: subjectTable.hasPractical })
+        .from(subjectTable)
+        .where(inArray(subjectTable.id, allSubjectIds))
+
+      hasPractical = subjects.some((s) => s.hasPractical === true)
+    }
+
+    return { success: true as const, data: { ...data, hasPractical } }
   } catch (error: any) {
     console.error("[registerStudent] Error:", error)
 

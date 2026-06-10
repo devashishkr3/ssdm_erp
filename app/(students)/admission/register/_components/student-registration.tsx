@@ -17,11 +17,14 @@ import { useState, useEffect } from "react"
 import axios from "axios"
 import { useMutRegisterStudent } from "../query/mut-register-student"
 import { toast } from "sonner"
+import { useRouter } from "next/navigation"
+
 
 export const StudentRegistration = () => {
   const [isUploading, setIsUploading] = useState<boolean>(false)
   const [isUploaded, setIsUploaded] = useState<boolean>(false)
   const { mutate, isPending } = useMutRegisterStudent()
+  const router = useRouter()
 
   const onUpload = async () => {
     setIsUploading(true)
@@ -201,8 +204,14 @@ export const StudentRegistration = () => {
       personal: personalValues,
       academic: academicValues,
       documents: documentsPayload as any,
+    }, {
+      onSuccess: (data) => {
+        const hasPractical = data?.hasPractical ?? false
+        router.push(`/admission/payment?batch=${personalValues.batch}&practical=${hasPractical}`)
+      },
     })
   }
+ 
 
   return (
     <div className="max-w-6xl mx-auto py-10 px-4 sm:px-6 lg:px-8 space-y-10">
@@ -251,4 +260,4 @@ export const StudentRegistration = () => {
       </div>
     </div>
   )
-}
+}
