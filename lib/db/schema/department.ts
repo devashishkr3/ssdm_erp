@@ -1,3 +1,4 @@
+import { createId } from "@paralleldrive/cuid2";
 import { relations, sql } from "drizzle-orm";
 import {
   boolean,
@@ -9,20 +10,16 @@ import {
   timestamp,
   varchar,
 } from "drizzle-orm/pg-core";
-import { createId } from "@paralleldrive/cuid2";
 
 // Independent master table
 export const academicSessionTable = pgTable("academic_session", {
   id: varchar({ length: 128 })
     .primaryKey()
     .$defaultFn(() => createId()),
-  name: varchar({
-    length: 30,
-  })
-    .notNull()
-    .unique(), // review is latter / I want to generate it automatically like 2026-2030
+  name: varchar({ length: 30 }).notNull().unique(), // review is latter / I want to generate it automatically like 2026-2030
   startDate: date().notNull(),
   endDate: date().notNull(),
+  isActive: boolean().notNull().default(true),
   createdAt: timestamp().defaultNow().notNull(),
   updatedAt: timestamp().defaultNow().notNull(),
 });
@@ -34,59 +31,26 @@ export const departmentTable = pgTable("department", {
   id: varchar({ length: 128 })
     .primaryKey()
     .$defaultFn(() => createId()),
-  code: varchar({
-    length: 10,
-  })
-    .notNull()
-    .unique(),
-  name: varchar({
-    length: 30,
-  })
-    .notNull()
-    .unique(),
-  description: text(),
+  code: varchar({ length: 10 }).notNull().unique(),
+  name: varchar({ length: 30 }).notNull().unique(),
+  description: varchar({ length: 100 }).notNull(),
   createdAt: timestamp().defaultNow().notNull(),
   updatedAt: timestamp().defaultNow().notNull(),
 });
 
 // Independent master table
-export const subjectTable = pgTable(
-  "subject",
-  {
-    id: varchar({ length: 128 })
-      .primaryKey()
-      .$defaultFn(() => createId()),
-    code: varchar({
-      length: 10,
-    })
-      .notNull()
-      .unique(),
-    name: varchar({
-      length: 100,
-    }).notNull(),
-    description: text(),
-    // type: varchar({
-    //   length: 30,
-    // })
-    //   .notNull()
-    //   .default("MJC"),
-    category: varchar({ length: 15 }).notNull().default("SCIENCE"),
-    isActive: boolean().default(true),
-    hasPractical: boolean().notNull().default(false),
-    practicalFee: integer().default(0), // This field is optional (It is for the future requirement)
-    createdAt: timestamp().defaultNow().notNull(),
-    updatedAt: timestamp().defaultNow().notNull(),
-  },
-  (table) => [
-    // check(
-    //   "type_check",
-    //   sql`${table.type} IN ('MJC', 'MIC', 'MDC', 'SEC', 'VAC')`,
-    // ),
-    check('category_check',
-      sql`${table.category} IN ('SCIENCE', 'COMMERCE', 'ARTS')`
-    )
-  ],
-);
+export const subjectTable = pgTable("subject", {
+  id: varchar({ length: 128 })
+    .primaryKey()
+    .$defaultFn(() => createId()),
+  code: varchar({ length: 10 }).notNull().unique(),
+  name: varchar({ length: 100 }).notNull(),
+  type: text("type", { enum: ["MJC", "MIC", "MDC", "SEC", "VAC"] }),
+  isActive: boolean().default(true),
+  hasPractical: boolean().notNull().default(false),
+  createdAt: timestamp().defaultNow().notNull(),
+  updatedAt: timestamp().defaultNow().notNull(),
+});
 
 //  Depends on Department
 export const courseTable = pgTable(
@@ -95,29 +59,15 @@ export const courseTable = pgTable(
     id: varchar({ length: 128 })
       .primaryKey()
       .$defaultFn(() => createId()),
-    name: varchar({
-      length: 50,
-    })
-      .notNull()
-      .unique(),
-    code: varchar({
-      length: 10,
-    })
-      .notNull()
-      .unique(),
-    type: varchar({
-      length: 30,
-    })
-      .notNull()
-      .default("UG Regular"),
-    description: text(),
+    name: varchar({ length: 50 }).notNull().unique(),
+    code: varchar({ length: 10 }).notNull().unique(),
+    type: varchar({ length: 30 }).notNull().default("UG Regular"),
+    description: varchar({ length: 255 }).notNull(),
     departmentId: varchar({ length: 128 })
-      .references(() => departmentTable.id, {
-        onDelete: "cascade",
-      })
+      .references(() => departmentTable.id, { onDelete: "cascade" })
       .notNull(),
     duration: integer().notNull().default(4),
-    isActive: boolean().default(true),
+    isActive: boolean().notNull().default(true),
     createdAt: timestamp().defaultNow().notNull(),
     updatedAt: timestamp().defaultNow().notNull(),
   },
@@ -135,97 +85,61 @@ export const batchTable = pgTable("batch", {
     .primaryKey()
     .$defaultFn(() => createId()),
   courseId: varchar({ length: 128 })
-    .references(() => courseTable.id, {
-      onDelete: "cascade",
-    })
+    .references(() => courseTable.id, { onDelete: "cascade" })
     .notNull(),
-  academicSessionId: varchar({ length: 128 })
-    .references(() => academicSessionTable.id, {
-      onDelete: "cascade",
-    })
+  sessionId: varchar({ length: 128 })
+    .references(() => academicSessionTable.id, { onDelete: "cascade" })
     .notNull(),
-  perSemesterFee: integer().notNull(),
-  isActive: boolean().default(true),
   createdAt: timestamp().defaultNow().notNull(),
   updatedAt: timestamp().defaultNow().notNull(),
 });
 
+// Belongs to a Course
+export const semesterTable = pgTable("semester", {
+  id: varchar({ length: 128 })
+    .primaryKey()
+    .$defaultFn(() => createId()),
+  batchId: varchar({ length: 128 })
+    .references(() => batchTable.id, { onDelete: "cascade" })
+    .notNull(),
+  name: varchar({ length: 30 }).notNull(), // review is latter / I want to generate it automatically like Semester I, Semester II, etc.
+  semesterNumber: integer().notNull(), // e.g., 1, 2, 3... up to (duration * 2)
+  createdAt: timestamp().defaultNow().notNull(),
+  updatedAt: timestamp().defaultNow().notNull(),
+});
 
+export const semesterSubjectTable = pgTable("semester_subject", {
+  id: varchar({ length: 128 })
+    .primaryKey()
+    .$defaultFn(() => createId()),
+  semesterId: varchar({ length: 128 })
+    .references(() => semesterTable.id, { onDelete: "cascade" })
+    .notNull(),
+  subjectId: varchar({ length: 128 })
+    .references(() => subjectTable.id, { onDelete: "cascade" })
+    .notNull(),
+  createdAt: timestamp().defaultNow().notNull(),
+  updatedAt: timestamp().defaultNow().notNull(),
+});
 
-
-
-// export const batchTable = pgTable("batch", {
-//   id: varchar({ length: 128 })
-//     .primaryKey()
-//     .$defaultFn(() => createId()),
-//   courseSessionId: varchar({ length: 128 })
-//     .references(() => courseSessionTable.id, {
-//       onDelete: "cascade",
-//     })
-//     .notNull(),
-//   name: varchar({
-//     length: 30,
-//   }).notNull(), // Try to generate it automatically.
-//   createdAt: timestamp().defaultNow().notNull(),
-//   updatedAt: timestamp().defaultNow().notNull(),
-// });
-
-// // Belongs to a Course
-// export const semesterTable = pgTable("semester", {
-//   id: varchar({ length: 128 })
-//     .primaryKey()
-//     .$defaultFn(() => createId()),
-//   courseSessionId: varchar({ length: 128 })
-//     .references(() => courseSessionTable.id, {
-//       onDelete: "cascade",
-//     })
-//     .notNull(),
-//   name: varchar({
-//     length: 30,
-//   }).notNull(), // review is latter / I want to generate it automatically like Semester I, Semester II, etc.
-//   semesterNumber: integer().notNull(), // e.g., 1, 2, 3... up to (duration * 2)
-//   createdAt: timestamp().defaultNow().notNull(),
-//   updatedAt: timestamp().defaultNow().notNull(),
-// });
-
-// export const semesterSubjectTable = pgTable("semester_subject", {
-//   id: varchar({ length: 128 })
-//     .primaryKey()
-//     .$defaultFn(() => createId()),
-//   semesterId: varchar({ length: 128 })
-//     .references(() => semesterTable.id, {
-//       onDelete: "cascade",
-//     })
-//     .notNull(),
-//   subjectId: varchar({ length: 128 })
-//     .references(() => subjectTable.id, {
-//       onDelete: "cascade",
-//     })
-//     .notNull(),
-//   createdAt: timestamp().defaultNow().notNull(),
-//   updatedAt: timestamp().defaultNow().notNull(),
-// });
-
-// // points directly to the course
-// export const feeTable = pgTable("fee", {
-//   id: varchar({ length: 128 })
-//     .primaryKey()
-//     .$defaultFn(() => createId()),
-//   semesterId: varchar({ length: 128 })
-//     .references(() => semesterTable.id, {
-//       onDelete: "cascade",
-//     })
-//     .notNull(),
-//   institution: integer().notNull().default(0),
-//   university: integer().notNull().default(0),
-//   late: integer().notNull().default(0),
-//   practical: integer().notNull().default(0),
-//   cultural: integer().notNull().default(0),
-//   sports: integer().notNull().default(0),
-//   miscellaneous: integer().notNull().default(0),
-//   createdAt: timestamp().defaultNow().notNull(),
-//   updatedAt: timestamp().defaultNow().notNull(),
-// });
+// points directly to the course
+export const feeTable = pgTable("fee", {
+  id: varchar({ length: 128 })
+    .primaryKey()
+    .$defaultFn(() => createId()),
+  semesterId: varchar({ length: 128 })
+    .references(() => semesterTable.id, { onDelete: "cascade" })
+    .notNull(),
+  institution: integer().notNull().default(0),
+  university: integer().notNull().default(0),
+  late: integer().notNull().default(0),
+  practical: integer().notNull().default(0),
+  cultural: integer().notNull().default(0),
+  sports: integer().notNull().default(0),
+  miscellaneous: integer().notNull().default(0),
+  createdAt: timestamp().defaultNow().notNull(),
+  updatedAt: timestamp().defaultNow().notNull(),
+});
 
 // DEPARTMENT RELATIONS
 
@@ -248,82 +162,66 @@ export const courseRelations = relations(courseTable, ({ one, many }) => ({
 
 export const academicSessionRelations = relations(
   academicSessionTable,
-  ({ many }) => ({
-    batches: many(batchTable),
-  }),
-);
-
-// COURSE SESSION (batch table) RELATIONS
-
-export const courseSessionRelations = relations(
-  batchTable,
-  ({ one, many }) => ({
-    course: one(courseTable, {
-      fields: [batchTable.courseId],
-      references: [courseTable.id],
-    }),
-
-    academicSession: one(academicSessionTable, {
-      fields: [batchTable.academicSessionId],
-      references: [academicSessionTable.id],
-    }),
-
-    // batches: many(batchTable),
-
-    // semesters: many(semesterTable),
-  }),
+  ({ many }) => ({ batches: many(batchTable) }),
 );
 
 // BATCH RELATIONS
 
-// export const batchRelations = relations(batchTable, ({ one }) => ({
-//   courseSession: one(batchTable, {
-//     fields: [batchTable.courseSessionId],
-//     references: [courseSessionTable.id],
-//   }),
-// }));
+export const batchRelations = relations(batchTable, ({ one, many }) => ({
+  course: one(courseTable, {
+    fields: [batchTable.courseId],
+    references: [courseTable.id],
+  }),
+
+  session: one(academicSessionTable, {
+    fields: [batchTable.sessionId],
+    references: [academicSessionTable.id],
+  }),
+
+  semesters: many(semesterTable),
+}));
 
 // SEMESTER RELATIONS
 
-// export const semesterRelations = relations(semesterTable, ({ one, many }) => ({
-//   courseSession: one(courseSessionTable, {
-//     fields: [semesterTable.courseSessionId],
-//     references: [courseSessionTable.id],
-//   }),
+export const semesterRelations = relations(semesterTable, ({ one, many }) => ({
+  batch: one(batchTable, {
+    fields: [semesterTable.batchId],
+    references: [batchTable.id],
+  }),
 
-//   semesterSubjects: many(semesterSubjectTable),
+  semesterSubjects: many(semesterSubjectTable),
 
-//   fees: many(feeTable),
-// }));
+  fees: many(feeTable),
+}));
 
 // SUBJECT RELATIONS
 
-// export const subjectRelations = relations(subjectTable, ({ many }) => ({
-//   semesterSubjects: many(semesterSubjectTable),
-// }));
+export const subjectRelations = relations(subjectTable, ({ many }) => ({
+  semesterSubjects: many(semesterSubjectTable),
+}));
 
-// // SEMESTER SUBJECT RELATIONS
+// SEMESTER SUBJECT RELATIONS
 
-// export const semesterSubjectRelations = relations(
-//   semesterSubjectTable,
-//   ({ one }) => ({
-//     semester: one(semesterTable, {
-//       fields: [semesterSubjectTable.semesterId],
-//       references: [semesterTable.id],
-//     }),
+export const semesterSubjectRelations = relations(
+  semesterSubjectTable,
+  ({ one }) => ({
+    semester: one(semesterTable, {
+      fields: [semesterSubjectTable.semesterId],
+      references: [semesterTable.id],
+    }),
 
-//     subject: one(subjectTable, {
-//       fields: [semesterSubjectTable.subjectId],
-//       references: [subjectTable.id],
-//     }),
-//   }),
-// );
+    subject: one(subjectTable, {
+      fields: [semesterSubjectTable.subjectId],
+      references: [subjectTable.id],
+    }),
+  }),
+);
 
-// // FEE RELATIONS
+// FEE RELATIONS
 
-// export const feeRelations = relations(feeTable, ({ one }) => ({
-//   semester: one(semesterTable, {
-//     fields: [feeTable.semesterId],
-//     references: [semesterTable.id],
-//   }),
-// }));
+export const feeRelations = relations(feeTable, ({ one }) => ({
+  semester: one(semesterTable, {
+    fields: [feeTable.semesterId],
+    references: [semesterTable.id],
+  }),
+}));

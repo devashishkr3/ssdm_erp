@@ -23,7 +23,7 @@ export function InputForSignup({
         name="name"
         render={({ field, fieldState }) => (
           <Field>
-            <FieldLabel requiredLable>Name</FieldLabel>
+            <FieldLabel required>Name</FieldLabel>
             <FieldContent>
               <Input {...field} aria-invalid={fieldState.invalid} />
               <FieldError errors={[fieldState.error]} />
@@ -36,7 +36,7 @@ export function InputForSignup({
         name="email"
         render={({ field, fieldState }) => (
           <Field>
-            <FieldLabel requiredLable>Email</FieldLabel>
+            <FieldLabel required>Email</FieldLabel>
             <FieldContent>
               <Input
                 {...field}
@@ -53,7 +53,7 @@ export function InputForSignup({
         name="password"
         render={({ field, fieldState }) => (
           <Field>
-            <FieldLabel requiredLable>Password</FieldLabel>
+            <FieldLabel required>Password</FieldLabel>
             <FieldContent>
               <PasswordInput {...field} aria-invalid={fieldState.invalid} />
               <FieldError errors={[fieldState.error]} />
@@ -66,7 +66,7 @@ export function InputForSignup({
         name="confirmPassword"
         render={({ field, fieldState }) => (
           <Field>
-            <FieldLabel requiredLable>Confirm password</FieldLabel>
+            <FieldLabel required>Confirm password</FieldLabel>
             <FieldContent>
               <PasswordInput {...field} aria-invalid={fieldState.invalid} />
               <FieldError errors={[fieldState.error]} />

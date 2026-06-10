@@ -14,7 +14,7 @@ export function InputForSingin({ form }: { form: UseFormReturn<SigninSchema> }) 
                 name="email"
                 render={({ field, fieldState }) => (
                     <Field>
-                        <FieldLabel requiredLable>Email</FieldLabel>
+                        <FieldLabel required>Email</FieldLabel>
                         <FieldContent>
                             <Input
                                 {...field}
@@ -31,7 +31,7 @@ export function InputForSingin({ form }: { form: UseFormReturn<SigninSchema> }) 
                 name="password"
                 render={({ field, fieldState }) => (
                     <Field>
-                        <FieldLabel requiredLable>Password</FieldLabel>
+                        <FieldLabel required>Password</FieldLabel>
                         <FieldContent>
                             <PasswordInput
                                 {...field}
