@@ -82,7 +82,7 @@ export function DepartmentCoursesSheet({
           <ul className="grid gap-4 pb-6 sm:grid-cols-2 lg:grid-cols-3">
             {courses.map((course) => (
               <li key={course.id}>
-                <Link href={`/batch/${course.id}`} className="block h-full">
+                <Link href={`/course/${course.id}`} className="block h-full">
                   <Card
                     size="sm"
                     className="h-full transition-colors hover:bg-muted/60"

@@ -21,7 +21,6 @@ export const updateAcademicSessionSchema = z
     id: z.string().min(1, { message: "Session id is required" }),
     startYear: academicSessionYearSchema,
     endYear: academicSessionYearSchema,
-    isActive: z.boolean(),
   })
   .refine((data) => data.endYear > data.startYear, {
     message: "End year must be after the start year",
@@ -32,3 +31,4 @@ export type AddAcademicSessionSchema = z.infer<typeof addAcademicSessionSchema>;
 export type UpdateAcademicSessionSchema = z.infer<
   typeof updateAcademicSessionSchema
 >;
+

@@ -4,7 +4,6 @@ import type { ColumnDef } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { ChevronDown, ChevronRight } from "lucide-react";
 import type { useGetAcademicSessions } from "@/app/(departments)/academic-session/query/get-academic-session";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { EditSessionDialog } from "./edit-session-dialog";
 
@@ -32,17 +31,6 @@ export const columns: ColumnDef<AcademicSessionRow>[] = [
     header: "End Date",
     cell: ({ row }) => {
       return <div>{format(row.original.endDate, "PPP")}</div>;
-    },
-  },
-  {
-    accessorKey: "isActive",
-    header: "Status",
-    cell: ({ row }) => {
-      return (
-        <Badge variant={row.original.isActive ? "default" : "secondary"}>
-          {row.original.isActive ? "Active" : "Depreciated"}
-        </Badge>
-      );
     },
   },
   {

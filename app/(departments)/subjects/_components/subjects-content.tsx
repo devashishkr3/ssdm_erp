@@ -8,7 +8,7 @@ import { AddSubjectSheet } from "./add-subject-sheet";
 
 export function SubjectsContent() {
   const [search, setSearch] = useState("");
-  const [filterType, setFilterType] = useState("");
+  const [filterCategory, setFilterCategory] = useState("");
 
   // Only fetch all subjects once, then filter client-side
   const { data: subjects = [], isPending, isError, error } = useGetSubjects();
@@ -25,12 +25,12 @@ export function SubjectsContent() {
       );
     }
 
-    if (filterType) {
-      filtered = filtered.filter((subject) => subject.type === filterType);
+    if (filterCategory) {
+      filtered = filtered.filter((subject) => subject.category === filterCategory);
     }
 
     return filtered;
-  }, [subjects, search, filterType]);
+  }, [subjects, search, filterCategory]);
 
   if (isPending) {
     return <div className="text-center py-8">Loading subjects...</div>;
@@ -53,9 +53,9 @@ export function SubjectsContent() {
         columns={columns}
         data={filteredSubjects}
         onSearch={setSearch}
-        onFilterType={setFilterType}
+        onFilterCategory={setFilterCategory}
         search={search}
-        filterType={filterType}
+        filterCategory={filterCategory}
       />
     </div>
   );

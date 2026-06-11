@@ -26,25 +26,23 @@ export const columns: ColumnDef<SubjectRow>[] = [
     },
   },
   {
-    accessorKey: "type",
-    header: "Type",
+    accessorKey: "category",
+    header: "Category",
     cell: ({ row }) => {
-      const typeColors: Record<string, string> = {
-        MJC: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
-        MIC: "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200",
-        MDC: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
-        SEC: "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-200",
-        VAC: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-200",
+      const categoryColors: Record<string, string> = {
+        SCIENCE: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200",
+        COMMERCE: "bg-purple-100 text-purple-800 dark:bg-purple-900 dark:text-purple-200",
+        ARTS: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200",
       };
       return (
         <Badge
           className={
-            row.original.type
-              ? typeColors[row.original.type]
+            row.original.category
+              ? categoryColors[row.original.category]
               : "bg-gray-100 text-gray-800"
           }
         >
-          {row.original.type || "N/A"}
+          {row.original.category || "N/A"}
         </Badge>
       );
     },

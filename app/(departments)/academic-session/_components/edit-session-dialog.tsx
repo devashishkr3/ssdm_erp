@@ -26,7 +26,6 @@ import {
   NativeSelect,
   NativeSelectOption,
 } from "@/components/ui/native-select";
-import { Switch } from "@/components/ui/switch";
 import {
   getDefaultEndYear,
   getEndYearFromDate,
@@ -56,7 +55,6 @@ export function EditSessionDialog({
       id: session.id,
       startYear: defaultStartYear,
       endYear: defaultEndYear,
-      isActive: session.isActive,
     },
   });
   const startYear = useWatch({ control: form.control, name: "startYear" });
@@ -88,7 +86,6 @@ export function EditSessionDialog({
             id: session.id,
             startYear: defaultStartYear,
             endYear: defaultEndYear,
-            isActive: session.isActive,
           });
         }
         setOpen(nextOpen);
@@ -108,7 +105,7 @@ export function EditSessionDialog({
           <DialogHeader>
             <DialogTitle>Edit Session</DialogTitle>
             <DialogDescription>
-              Update the start and end year or disable this academic session.
+              Update the start and end year for this academic session.
             </DialogDescription>
           </DialogHeader>
 
@@ -164,20 +161,6 @@ export function EditSessionDialog({
                     </NativeSelect>
                     <FieldError errors={[fieldState.error]} />
                   </FieldContent>
-                </Field>
-              )}
-            />
-
-            <Controller
-              control={form.control}
-              name="isActive"
-              render={({ field }) => (
-                <Field orientation="horizontal">
-                  <Switch
-                    checked={field.value}
-                    onCheckedChange={field.onChange}
-                  />
-                  <FieldLabel className="!mt-0">Active session</FieldLabel>
                 </Field>
               )}
             />

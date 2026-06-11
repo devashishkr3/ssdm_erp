@@ -9,7 +9,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useGetAcademicSessions } from "../query/get-academic-session";
 import { AddSessionDialog } from "./add-session-dialog";
 import { type AcademicSessionRow, columns } from "./column";
@@ -31,7 +30,6 @@ function CourseBatchDetails({ session }: { session: AcademicSessionRow }) {
           <TableRow className="hover:bg-transparent">
             <TableHead>Course</TableHead>
             <TableHead>Department</TableHead>
-            <TableHead>Semesters</TableHead>
             <TableHead>Status</TableHead>
           </TableRow>
         </TableHeader>
@@ -40,7 +38,6 @@ function CourseBatchDetails({ session }: { session: AcademicSessionRow }) {
             <TableRow key={batch.id}>
               <TableCell className="font-medium">{batch.course.name}</TableCell>
               <TableCell>{batch.course.department.name}</TableCell>
-              <TableCell>{batch.semesters.length}</TableCell>
               <TableCell>
                 <Badge
                   variant={batch.course.isActive ? "default" : "secondary"}
@@ -70,37 +67,19 @@ export function SessionTabsTable() {
   }
 
   const sessions = data ?? [];
-  const activeSessions = sessions.filter((session) => session.isActive);
-  const depreciatedSessions = sessions.filter((session) => !session.isActive);
 
   return (
-    <Tabs defaultValue="active" className="w-full">
-      <div className="flex items-center justify-between gap-3">
-        <TabsList>
-          <TabsTrigger value="active">Active</TabsTrigger>
-          <TabsTrigger value="depreciated">Depreciated</TabsTrigger>
-        </TabsList>
+    <div className="flex flex-col gap-4">
+      <div className="flex items-center justify-end">
         <AddSessionDialog />
       </div>
-
-      <TabsContent value="active">
-        <DataTable
-          columns={columns}
-          data={activeSessions}
-          renderExpandedRow={(session) => (
-            <CourseBatchDetails session={session} />
-          )}
-        />
-      </TabsContent>
-      <TabsContent value="depreciated">
-        <DataTable
-          columns={columns}
-          data={depreciatedSessions}
-          renderExpandedRow={(session) => (
-            <CourseBatchDetails session={session} />
-          )}
-        />
-      </TabsContent>
-    </Tabs>
+      <DataTable
+        columns={columns}
+        data={sessions}
+        renderExpandedRow={(session) => (
+          <CourseBatchDetails session={session} />
+        )}
+      />
+    </div>
   );
 }

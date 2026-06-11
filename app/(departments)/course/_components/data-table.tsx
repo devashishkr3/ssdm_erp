@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import {
   type ColumnDef,
   flexRender,
@@ -10,10 +9,6 @@ import {
 import { Search, X } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import {
-  NativeSelect,
-  NativeSelectOption,
-} from "@/components/ui/native-select";
-import {
   Table,
   TableBody,
   TableCell,
@@ -21,26 +16,19 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { Button } from "@/components/ui/button";
-
-const SUBJECT_CATEGORIES = ["SCIENCE", "COMMERCE", "ARTS"];
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
   onSearch: (search: string) => void;
-  onFilterCategory: (category: string) => void;
   search: string;
-  filterCategory: string;
 }
 
 export function DataTable<TData, TValue>({
   columns,
   data,
   onSearch,
-  onFilterCategory,
   search,
-  filterCategory,
 }: DataTableProps<TData, TValue>) {
   const table = useReactTable({
     data,
@@ -52,56 +40,24 @@ export function DataTable<TData, TValue>({
     onSearch("");
   };
 
-  const clearFilter = () => {
-    onFilterCategory("");
-  };
-
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-4">
-        <div className="relative flex-1">
-          <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
-          <Input
-            placeholder="Search by subject name or code..."
-            value={search}
-            onChange={(e) => onSearch(e.target.value)}
-            className="pl-9"
-          />
-          {search && (
-            <button
-              onClick={clearSearch}
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-            >
-              <X className="size-4" />
-            </button>
-          )}
-        </div>
-
-        <div className="flex gap-2">
-          <NativeSelect
-            value={filterCategory}
-            onChange={(e) => onFilterCategory(e.target.value)}
-            className="min-w-[150px]"
+      <div className="relative w-full sm:max-w-sm">
+        <Search className="absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" />
+        <Input
+          placeholder="Search by course name or code..."
+          value={search}
+          onChange={(e) => onSearch(e.target.value)}
+          className="pl-9"
+        />
+        {search && (
+          <button
+            onClick={clearSearch}
+            className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
           >
-            <NativeSelectOption value="">All Categories</NativeSelectOption>
-            {SUBJECT_CATEGORIES.map((category) => (
-              <NativeSelectOption key={category} value={category}>
-                {category}
-              </NativeSelectOption>
-            ))}
-          </NativeSelect>
-
-          {filterCategory && (
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={clearFilter}
-              className="h-9"
-            >
-              <X className="size-4" />
-            </Button>
-          )}
-        </div>
+            <X className="size-4" />
+          </button>
+        )}
       </div>
 
       <div className="overflow-hidden rounded-md border">
@@ -146,7 +102,7 @@ export function DataTable<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No subjects found.
+                  No courses found.
                 </TableCell>
               </TableRow>
             )}

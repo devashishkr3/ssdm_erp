@@ -64,7 +64,7 @@ export async function addSubject(input: AddSubjectSchema) {
       .values({
         name: parsedInput.data.name,
         code: parsedInput.data.code,
-        type: parsedInput.data.type,
+        category: parsedInput.data.category,
         hasPractical: parsedInput.data.hasPractical,
         isActive: true,
       })
@@ -91,11 +91,12 @@ export async function updateSubject(input: UpdateSubjectSchema) {
       return { success: false, message: "Invalid subject details" };
     }
 
-    const { id, name, code, type, hasPractical, isActive } = parsedInput.data;
+    const { id, name, code, category, hasPractical, isActive } =
+      parsedInput.data;
 
     const [subject] = await db
       .update(subjectTable)
-      .set({ name, code, type, hasPractical, isActive, updatedAt: new Date() })
+      .set({ name, code, category, hasPractical, isActive, updatedAt: new Date() })
       .where(eq(subjectTable.id, id))
       .returning();
 

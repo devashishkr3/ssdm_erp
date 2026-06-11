@@ -41,7 +41,7 @@ export async function getAcademicSessions() {
       ],
       with: {
         batches: {
-          with: { course: { with: { department: true } }, semesters: true },
+          with: { course: { with: { department: true } } },
         },
       },
     });
@@ -80,7 +80,7 @@ export async function addAcademicSession(input: AddAcademicSessionSchema) {
     );
     const [academicSession] = await db
       .insert(academicSessionTable)
-      .values({ ...sessionDetails, isActive: true })
+      .values({ ...sessionDetails })
       .returning();
 
     return { success: true, data: academicSession };
@@ -109,11 +109,11 @@ export async function updateAcademicSession(
       return { success: false, message: "Invalid academic session details" };
     }
 
-    const { id, startYear, endYear, isActive } = parsedInput.data;
+    const { id, startYear, endYear } = parsedInput.data;
     const sessionDetails = getAcademicSessionDetails(startYear, endYear);
     const [academicSession] = await db
       .update(academicSessionTable)
-      .set({ ...sessionDetails, isActive, updatedAt: new Date() })
+      .set({ ...sessionDetails, updatedAt: new Date() })
       .where(eq(academicSessionTable.id, id))
       .returning();
 

@@ -31,7 +31,7 @@ import { Switch } from "@/components/ui/switch";
 import {
   type AddSubjectSchema,
   addSubjectSchema,
-  SUBJECT_TYPES,
+  SUBJECT_CATEGORIES,
 } from "../lib/zod-type/subject-type";
 import { useAddSubject } from "../query/mut-add-subject";
 
@@ -41,12 +41,12 @@ export function AddSubjectSheet() {
 
   const form = useForm<AddSubjectSchema>({
     resolver: zodResolver(addSubjectSchema) as never,
-    defaultValues: { name: "", code: "", type: "MJC", hasPractical: false },
+    defaultValues: { name: "", code: "", category: "SCIENCE", hasPractical: false },
   });
 
   async function onSubmit(values: AddSubjectSchema) {
     await addSubject.mutateAsync(values);
-    form.reset({ name: "", code: "", type: "MJC", hasPractical: false });
+    form.reset({ name: "", code: "", category: "SCIENCE", hasPractical: false });
     setOpen(false);
   }
 
@@ -110,10 +110,10 @@ export function AddSubjectSheet() {
 
               <Controller
                 control={form.control}
-                name="type"
+                name="category"
                 render={({ field, fieldState }) => (
                   <Field data-invalid={fieldState.invalid}>
-                    <FieldLabel>Subject Type</FieldLabel>
+                    <FieldLabel>Subject Category</FieldLabel>
                     <FieldContent>
                       <NativeSelect
                         value={field.value}
@@ -121,9 +121,9 @@ export function AddSubjectSheet() {
                         aria-invalid={fieldState.invalid}
                         className="w-full"
                       >
-                        {SUBJECT_TYPES.map((type) => (
-                          <NativeSelectOption key={type} value={type}>
-                            {type}
+                        {SUBJECT_CATEGORIES.map((category) => (
+                          <NativeSelectOption key={category} value={category}>
+                            {category}
                           </NativeSelectOption>
                         ))}
                       </NativeSelect>
