@@ -1,4 +1,7 @@
 import { VerificationCard } from "./_components/verificationCard";
+import { getCollegeConfig } from "@/lib/college-config";
+import { SiteHeader } from "@/components/informative/site-header";
+import { SiteFooter } from "@/components/informative/site-footer";
 
 export default async function VerifyPage({
   params,
@@ -6,10 +9,15 @@ export default async function VerifyPage({
   params: Promise<{ batchId: string }>;
 }) {
   const { batchId } = await params;
+  const config = getCollegeConfig();
 
   return (
-    <div className="mainContainer w-auto flex flex-col py-10">
-      <VerificationCard batchId={batchId} />
+    <div className="min-h-screen bg-slate-50 flex flex-col font-sans selection:bg-blue-900 selection:text-white">
+      <SiteHeader collegeName={config.name} />
+      <main className="flex-grow flex items-center justify-center py-12 px-4 sm:px-6 lg:px-8">
+        <VerificationCard batchId={batchId} />
+      </main>
+      <SiteFooter config={config} />
     </div>
   );
 }
