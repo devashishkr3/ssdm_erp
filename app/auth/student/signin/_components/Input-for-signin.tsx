@@ -11,7 +11,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { PasswordInput } from "@/components/ui/password-input";
 
-export function InputForSingin({
+export function InputForSignin({
   form,
 }: {
   form: UseFormReturn<SigninSchema>;
@@ -20,15 +20,15 @@ export function InputForSingin({
     <>
       <Controller
         control={form.control}
-        name="email"
+        name="uan"
         render={({ field, fieldState }) => (
           <Field>
-            <FieldLabel required>Email</FieldLabel>
+            <FieldLabel required>UAN Number</FieldLabel>
             <FieldContent>
               <Input
                 {...field}
                 aria-invalid={fieldState.invalid}
-                type="email"
+                placeholder="Enter your UAN number"
               />
               <FieldError errors={[fieldState.error]} />
             </FieldContent>

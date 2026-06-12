@@ -14,14 +14,23 @@ import { LoadingSwap } from "@/components/ui/loading-swap";
 import { signUp } from "@/lib/auth-client";
 import { type SignupSchema, signupSchema } from "../lib/zod-type/signup-type";
 import { InputForSignup } from "./Input-for-signup";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import Link from "next/link";
 
 export function MainSignupForm() {
+  const router = useRouter();
+  const [errorMsg, setErrorMsg] = useState("");
+
   const form = useForm<SignupSchema>({
-    resolver: zodResolver(signupSchema),
+    // biome-ignore lint/suspicious/noExplicitAny: resolver type needs to bypass RHF/Zod type mismatches due to refined schemas
+    resolver: zodResolver(signupSchema) as any,
     defaultValues: { name: "", email: "", password: "", confirmPassword: "" },
   });
 
   const onSubmit = async (data: SignupSchema) => {
+    setErrorMsg("");
+
     await signUp.email(
       {
         name: data.name,
@@ -31,11 +40,10 @@ export function MainSignupForm() {
       },
       {
         onSuccess: () => {
-          alert("Sign up success");
-          form.reset();
+          router.push("/auth/admin/signin");
         },
         onError: (ctx) => {
-          alert(ctx.error.message);
+          setErrorMsg(ctx.error.message || "Something went wrong");
           form.reset();
         },
       },
@@ -47,7 +55,7 @@ export function MainSignupForm() {
       <div className="w-full max-w-sm">
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">Sign up</CardTitle>
+            <CardTitle className="text-2xl">Admin Sign Up</CardTitle>
             <CardDescription>
               Enter your details below to create your account
             </CardDescription>
@@ -60,11 +68,26 @@ export function MainSignupForm() {
               <div className="flex flex-col gap-4">
                 <InputForSignup form={form} />
               </div>
+
+              {errorMsg && (
+                <p className="text-sm text-destructive">{errorMsg}</p>
+              )}
+
               <Button type="submit" className="w-full">
                 <LoadingSwap isLoading={form.formState.isSubmitting}>
                   Sign up
                 </LoadingSwap>
               </Button>
+
+              <p className="text-sm text-center text-muted-foreground">
+                Already have an account?{" "}
+                <Link
+                  href="/auth/admin/signin"
+                  className="text-primary hover:underline font-medium"
+                >
+                  Sign in
+                </Link>
+              </p>
             </form>
           </CardContent>
         </Card>

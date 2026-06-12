@@ -6,6 +6,7 @@ import {
   IconCalendarEvent,
   IconUserCheck,
   IconClipboardCheck,
+  IconFileText,
 } from "@tabler/icons-react";
 import type { ComponentType } from "react";
 
@@ -61,6 +62,12 @@ export function getMenuList(pathname: string): Group[] {
           label: "Admission Opens",
           icon: IconUserCheck,
           active: pathname.startsWith("/admission-open"),
+        },
+        {
+          href: "/tender",
+          label: "Tenders",
+          icon: IconFileText,
+          active: pathname.startsWith("/tender"),
         },
       ],
     },

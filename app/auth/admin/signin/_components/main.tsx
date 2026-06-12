@@ -3,7 +3,7 @@
 import { useForm } from "react-hook-form";
 import { signIn } from "@/lib/auth-client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { SigninSchema, signinSchema } from "../lib/zod-type/signin-type";
+import { type SigninSchema, signinSchema } from "../lib/zod-type/signin-type";
 import { InputForSingin } from "./Input-for-signin";
 import { Button } from "@/components/ui/button";
 import { LoadingSwap } from "@/components/ui/loading-swap";
@@ -14,22 +14,30 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import Link from "next/link";
 
 export function MainSigninForm() {
+  const router = useRouter();
+  const [errorMsg, setErrorMsg] = useState("");
+
   const form = useForm<SigninSchema>({
     resolver: zodResolver(signinSchema),
     defaultValues: { email: "", password: "" },
   });
 
   const onSubmit = async (data: SigninSchema) => {
+    setErrorMsg("");
+
     await signIn.email(
       { email: data.email, password: data.password },
       {
         onSuccess: () => {
-          alert("Sign in success");
+          router.push("/department");
         },
         onError: (ctx) => {
-          alert(ctx.error.message);
+          setErrorMsg(ctx.error.message || "Invalid credentials");
           form.reset();
         },
       },
@@ -41,7 +49,7 @@ export function MainSigninForm() {
       <div className="w-full max-w-sm">
         <Card>
           <CardHeader>
-            <CardTitle className="text-2xl">Sign in</CardTitle>
+            <CardTitle className="text-2xl">Admin Sign In</CardTitle>
             <CardDescription>
               Enter your email below to login to your account
             </CardDescription>
@@ -54,11 +62,26 @@ export function MainSigninForm() {
               <div className="flex flex-col gap-4">
                 <InputForSingin form={form} />
               </div>
+
+              {errorMsg && (
+                <p className="text-sm text-destructive">{errorMsg}</p>
+              )}
+
               <Button type="submit" className="w-full">
                 <LoadingSwap isLoading={form.formState.isSubmitting}>
                   Sign in
                 </LoadingSwap>
               </Button>
+
+              <p className="text-sm text-center text-muted-foreground">
+                Don't have an account?{" "}
+                <Link
+                  href="/auth/admin/signup"
+                  className="text-primary hover:underline font-medium"
+                >
+                  Sign up
+                </Link>
+              </p>
             </form>
           </CardContent>
         </Card>
