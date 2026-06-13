@@ -30,7 +30,10 @@ export function SiteHeader({ collegeName }: { collegeName: string }) {
             <span className="flex items-center gap-1">
               <Phone className="h-3 w-3" /> Helpline
             </span>
-            <Link href="/auth" className="hover:underline font-medium">
+            <Link href="/auth/student/signin" className="hover:underline font-medium">
+              Student Login
+            </Link>
+            <Link href="/auth/admin/signin" className="hover:underline font-medium">
               Staff Login
             </Link>
           </div>
