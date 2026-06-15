@@ -1,6 +1,6 @@
 import { db } from "@/lib/db";
 import { StudentFeePaymentTable } from "@/lib/db/schema/student";
-import { batchTable, courseTable, subjectTable } from "@/lib/db/schema/department";
+import { batchTable, courseTable, subjectTable, admissionOpenTable } from "@/lib/db/schema/department";
 import { eq, inArray } from "drizzle-orm";
 import { getCollegeConfig } from "@/lib/college-config";
 import { redirect } from "next/navigation";
@@ -74,7 +74,12 @@ export default async function PrintableReceiptPage({ searchParams }: ReceiptPage
     hasPractical = subjects.some((s) => s.hasPractical === true);
   }
 
-  const practicalFee = hasPractical ? 600 : 0;
+  // Fetch admission window details for practical fee check
+  const admissionOpen = await db.query.admissionOpenTable.findFirst({
+    where: eq(admissionOpenTable.batchId, student.batchId),
+  });
+
+  const practicalFee = hasPractical ? (admissionOpen?.practicalFee ?? 500) : 0;
   const totalAmount = Number(payment.amount);
   const lateFee = Math.max(0, totalAmount - tuitionFee - practicalFee);
 
@@ -153,6 +158,7 @@ export default async function PrintableReceiptPage({ searchParams }: ReceiptPage
               <td className="px-4 py-3 font-sans font-medium">{payment.paymentMode}</td>
               <td className="px-4 py-3 font-sans">
                 {new Date(payment.createdAt).toLocaleDateString("en-IN", {
+                  timeZone: "UTC",
                   day: "2-digit",
                   month: "short",
                   year: "numeric",

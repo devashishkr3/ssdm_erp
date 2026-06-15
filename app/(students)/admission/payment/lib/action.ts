@@ -15,8 +15,6 @@ import { eq, and, inArray } from "drizzle-orm";
 import { GcmPgEncryption } from "@/lib/getepay-encrypt";
 import { createId } from "@paralleldrive/cuid2";
 
-const PRACTICAL_FEE_CONST = 600;
-
 export async function getStudentPaymentDetails(params: {
   uan?: string;
   studentId?: string;
@@ -88,12 +86,14 @@ export async function getStudentPaymentDetails(params: {
       hasPractical = subjects.some((s) => s.hasPractical === true);
     }
 
-    const practicalFee = hasPractical ? PRACTICAL_FEE_CONST : 0;
-
-    // Fetch admission window details for late fee check
+    // Fetch admission window details for late fee and practical fee check
     const admissionOpen = await db.query.admissionOpenTable.findFirst({
       where: eq(admissionOpenTable.batchId, student.batchId),
     });
+
+    const practicalFee = hasPractical
+      ? (admissionOpen?.practicalFee ?? 500)
+      : 0;
 
     let lateFee = 0;
     if (admissionOpen) {

@@ -100,6 +100,7 @@ export const PaymentContainer = ({
   const formatDate = (date: string | Date) => {
     const d = new Date(date);
     return d.toLocaleDateString("en-IN", {
+      timeZone: "UTC",
       day: "2-digit",
       month: "short",
       year: "numeric",
