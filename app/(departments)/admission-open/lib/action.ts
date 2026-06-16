@@ -72,6 +72,7 @@ export async function addAdmissionOpen(input: AddAdmissionOpenSchema) {
         startDate: parsedInput.data.startDate,
         endDate: parsedInput.data.endDate,
         lateFee: parsedInput.data.lateFee,
+        practicalFee: parsedInput.data.practicalFee,
         isDateExtended: parsedInput.data.isDateExtended,
         extendedDate: parsedInput.data.extendedDate || null,
       })
@@ -107,6 +108,7 @@ export async function updateAdmissionOpen(input: UpdateAdmissionOpenSchema) {
       startDate,
       endDate,
       lateFee,
+      practicalFee,
       isDateExtended,
       extendedDate,
     } = parsedInput.data;
@@ -118,6 +120,7 @@ export async function updateAdmissionOpen(input: UpdateAdmissionOpenSchema) {
         startDate,
         endDate,
         lateFee,
+        practicalFee,
         isDateExtended,
         extendedDate: extendedDate || null,
         updatedAt: new Date(),
