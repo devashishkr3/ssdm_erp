@@ -54,7 +54,7 @@ export function getCollegeConfig(): CollegeConfig {
     city: config.COLLEGE_CITY || "PATNA",
     state: config.COLLEGE_STATE || "BIHAR",
     pincode: config.COLLEGE_PINCODE || "803213",
-    email: config.COLLEGE_EMAIL || "ssdm@gmail.com",
-    phone: config.COLLEGE_PHONE || "XXXXXXXXXX",
+    email: config.COLLEGE_EMAIL || "principalssdmcbarh@gmail.co",
+    phone: config.COLLEGE_PHONE || "7549298333",
   };
 }
