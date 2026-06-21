@@ -242,7 +242,7 @@ export default async function PrintableReceiptPage({
               </tr>
               <tr>
                 <td className="px-4 py-3 font-medium text-slate-700">
-                  Late Registration Fine{" "}
+                  Late Admission Fine{" "}
                   {lateFee > 0 && (
                     <span className="text-[9px] bg-red-100 text-red-800 px-1.5 py-0.5 rounded font-bold ml-1.5">
                       LATE WINDOW

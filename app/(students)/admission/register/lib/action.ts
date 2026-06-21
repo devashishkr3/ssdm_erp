@@ -10,10 +10,9 @@ import {
 import {
   subjectTable,
   batchTable,
-  courseTable,
 } from "@/lib/db/schema/department";
 import { user } from "@/lib/db/schema/auth-schema";
-import { and, eq, inArray, sql, count } from "drizzle-orm";
+import { and, eq, inArray, count } from "drizzle-orm";
 import {
   registerStudentSchema,
   type RegisterStudentPayload,
@@ -203,11 +202,11 @@ export async function registerStudent(payload: RegisterStudentPayload) {
       };
     }
 
-    // 2. Auto-generate collegeRoll:  CourseType prefix + Year (2-digit) + Sequence (4-digit padded)
-    //    e.g. UG2026290001
+    // 2. Auto-generate collegeRoll: <YY><courseCode><NNN>
+    //    e.g. 2607001 (26 = year, 07 = course code, 001 = first student in batch)
     const batch = await db.query.batchTable.findFirst({
       where: eq(batchTable.id, personal.batch),
-      with: { course: true, academicSession: true },
+      with: { course: true },
     });
 
     if (!batch || !batch.course) {
@@ -217,33 +216,19 @@ export async function registerStudent(payload: RegisterStudentPayload) {
       };
     }
 
-    // Extract course type prefix (e.g. "UG" from "UG Regular")
-    const courseTypePrefix = batch.course.type.split(" ")[0]; // "UG", "PG"
-
-    // Extract session year from academic session start date or name
-    const sessionYear =
-      batch.academicSession?.name?.match(/\d{4}/)?.[0] ||
-      new Date().getFullYear().toString();
+    const courseCode = batch.course.code;
+    const currentYear = new Date().getFullYear().toString().slice(-2);
 
     // 3. Transaction: insert admitted student, academic record, and documents atomically
     const data = await db.transaction(async (tx) => {
-      // Generate collegeRoll inside transaction to be robust against concurrent insertions
-      const prefix = `${courseTypePrefix}${sessionYear}`;
-      const lastStudent = await tx.query.AdmittedStudentTable.findFirst({
-        where: sql`${AdmittedStudentTable.collegeRoll} LIKE ${prefix + "%"}`,
-        orderBy: (table, { desc }) => [desc(table.collegeRoll)],
-      });
+      // Count admitted students in this batch (inside tx for concurrency safety)
+      const [{ studentCount }] = await tx
+        .select({ studentCount: count() })
+        .from(AdmittedStudentTable)
+        .where(eq(AdmittedStudentTable.batchId, personal.batch));
 
-      let nextSequence = 1;
-      if (lastStudent) {
-        const lastSequenceStr = lastStudent.collegeRoll.substring(prefix.length);
-        const lastSequence = parseInt(lastSequenceStr, 10);
-        if (!isNaN(lastSequence)) {
-          nextSequence = lastSequence + 1;
-        }
-      }
-      const sequenceNumber = nextSequence.toString().padStart(4, "0");
-      const collegeRoll = `${prefix}${sequenceNumber}`;
+      const serialNumber = (studentCount + 1).toString().padStart(3, "0");
+      const collegeRoll = `${currentYear}${courseCode}${serialNumber}`;
 
       // 3a. Insert admitted student
       const [admittedStudent] = await tx
