@@ -11,6 +11,7 @@ const adminRoutes = [
   "/subjects",
   "/academic-session",
   "/admission-open",
+  "/fee-collection",
   "/tender",
 ];
 
