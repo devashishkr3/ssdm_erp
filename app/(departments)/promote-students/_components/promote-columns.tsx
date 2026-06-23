@@ -28,7 +28,8 @@ export const promoteColumns: ColumnDef<AdmittedStudentRow>[] = [
     header: "Course",
     cell: ({ row }) => (
       <div className="text-sm">
-        {row.original.batch.course.name}
+        <div>{row.original.batch.course.name}</div>
+        <div className="text-xs text-muted-foreground">Session: {row.original.batch.academicSession.name}</div>
       </div>
     ),
   },
@@ -73,7 +74,7 @@ export const promoteColumns: ColumnDef<AdmittedStudentRow>[] = [
         return <Badge variant="secondary">Inactive</Badge>;
       }
       if (atMaxSem) {
-        return <Badge variant="outline" className="border-amber-500 text-amber-600">Max Semester</Badge>;
+        return <Badge variant="outline" className="border-amber-500 text-amber-600">Last Semester</Badge>;
       }
       return <Badge className="bg-emerald-600 hover:bg-emerald-700">Eligible</Badge>;
     },

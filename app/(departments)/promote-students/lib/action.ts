@@ -245,20 +245,6 @@ export async function searchAdmittedStudents(filters: {
           },
         },
       },
-      columns: {
-        id: true,
-        UAN: true,
-        collegeRoll: true,
-        name: true,
-        gender: true,
-        email: true,
-        phone: true,
-        currentSemesterCount: true,
-        isActive: true,
-        isDetained: true,
-        isPassed: true,
-        batchId: true,
-      },
     });
 
     return { success: true, data: students };
@@ -327,3 +313,108 @@ export async function promoteStudentsToPassed(studentIds: string[]) {
     };
   }
 }
+
+export async function updateStudentDetails(studentId: string, input: any) {
+  try {
+    const session = await getAdminSession();
+    if (!session.success) return session;
+
+    if (!studentId || studentId.trim() === "") {
+      return { success: false, message: "Student ID is required" };
+    }
+
+    const { editStudentZodSchema } = await import("@/app/(departments)/student-records/lib/zod-type/edit-student-type");
+    const parsedInput = editStudentZodSchema.safeParse({ ...input, id: studentId });
+
+    if (!parsedInput.success) {
+      const errMsgs = parsedInput.error.issues.map((e) => e.message).join(", ");
+      return { success: false, message: `Validation failed: ${errMsgs}` };
+    }
+
+    const {
+      name,
+      email,
+      phone,
+      gender,
+      DOB,
+      AadharNumber,
+      ABCID,
+      fathersName,
+      mothersName,
+      religion,
+      caste,
+      admissionType,
+      registrationNumber,
+      universityRoll,
+      city,
+      district,
+      state,
+      pinCode,
+    } = parsedInput.data;
+
+    // Check if Aadhar is already used by another student
+    if (AadharNumber) {
+      const existingAadhar = await db.query.AdmittedStudentTable.findFirst({
+        where: and(
+          eq(AdmittedStudentTable.AadharNumber, AadharNumber),
+          sql`${AdmittedStudentTable.id} != ${studentId}`
+        ),
+      });
+      if (existingAadhar) {
+        return { success: false, message: "Aadhar number is already in use by another student." };
+      }
+    }
+
+    // Check if Email is already used by another student
+    if (email) {
+      const existingEmail = await db.query.AdmittedStudentTable.findFirst({
+        where: and(
+          eq(AdmittedStudentTable.email, email),
+          sql`${AdmittedStudentTable.id} != ${studentId}`
+        ),
+      });
+      if (existingEmail) {
+        return { success: false, message: "Email is already in use by another student." };
+      }
+    }
+
+    // Perform database update
+    await db
+      .update(AdmittedStudentTable)
+      .set({
+        name,
+        email,
+        phone,
+        gender,
+        DOB,
+        AadharNumber,
+        ABCID,
+        fathersName,
+        mothersName,
+        religion,
+        caste,
+        admissionType,
+        registrationNumber,
+        universityRoll,
+        city,
+        district,
+        state,
+        pinCode,
+        updatedAt: new Date(),
+      })
+      .where(eq(AdmittedStudentTable.id, studentId));
+
+    return {
+      success: true,
+      message: "Student details updated successfully.",
+    };
+  } catch (error) {
+    console.error("[updateStudentDetails] Error:", error);
+    return {
+      success: false,
+      message: "Something went wrong while updating student details.",
+    };
+  }
+}
+
+

@@ -101,10 +101,10 @@ export function getMenuList(pathname: string): Group[] {
           active: pathname.startsWith("/promote-students"),
         },
         {
-          href: "/pass-out-students",
-          label: "Pass Out Students",
+          href: "/student-records",
+          label: "Student Records",
           icon: IconSchool,
-          active: pathname.startsWith("/pass-out-students"),
+          active: pathname.startsWith("/student-records"),
         },
         {
           href: "/examination",

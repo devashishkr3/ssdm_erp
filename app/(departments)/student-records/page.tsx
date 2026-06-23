@@ -9,7 +9,7 @@ import { getDepartment } from "@/app/(departments)/department/query/get-all-depa
 import { getCoursesQuery } from "@/app/(departments)/course/query/get-courses";
 import { StudentSearchPanel } from "./_components/student-search-panel";
 
-export default async function PassOutStudentsPage() {
+export default async function StudentRecordsPage() {
   const queryClient = new QueryClient();
 
   // Prefetch academic data for filters
@@ -20,12 +20,12 @@ export default async function PassOutStudentsPage() {
   ]);
 
   return (
-    <ContentLayout title="Pass Out Students">
+    <ContentLayout title="Student Records">
       <HydrationBoundary state={dehydrate(queryClient)}>
         <div className="flex flex-col gap-1 mb-6">
-          <h1 className="text-2xl font-semibold">Student Search & Graduation</h1>
+          <h1 className="text-2xl font-semibold">Student Directory & Records</h1>
           <p className="text-sm text-muted-foreground">
-            Search student records by academic or personal details and promote eligible students to Passed status.
+            Search and view student profiles, correct academic or personal records, and promote graduating students to Passed status.
           </p>
         </div>
         <div className="mt-6">

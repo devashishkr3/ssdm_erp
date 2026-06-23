@@ -81,12 +81,12 @@ export const AdmittedStudentTable = pgTable(
       .primaryKey()
       .$defaultFn(() => createId()),
     UAN: varchar({ length: 128 }).unique().notNull(),
-    registrationNumber: varchar({ length: 128 }),
-    universityRoll: varchar({ length: 128 }),
+    registrationNumber: varchar({ length: 128 }).unique(),
+    universityRoll: varchar({ length: 128 }).unique(),
     collegeRoll: varchar({ length: 128 }).unique().notNull(), // Ex. UG2026290001 (Course Type, Session, Unique No.)
     admissionNumber: varchar({ length: 128 }).unique(),
     confidentialNumber: varchar({ length: 128 }).unique(),
-    profileNumber: varchar({ length: 128 }),
+    profileNumber: varchar({ length: 128 }).unique(),
     admissionType: text(),
     ABCID: text().unique(),
     name: varchar({ length: 150 }).notNull(),

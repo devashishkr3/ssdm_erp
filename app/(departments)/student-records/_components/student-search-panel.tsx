@@ -1,13 +1,16 @@
 "use client";
 
-import { useState, useMemo, useEffect, useCallback } from "react";
+import { useState, useMemo, useEffect, useCallback, Fragment } from "react";
 import {
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
+  getExpandedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 import { useQuery } from "@tanstack/react-query";
+import { ChevronDown, ChevronRight } from "lucide-react";
+import { StudentExpandedDetails } from "./student-expanded-details";
 import {
   Table,
   TableBody,
@@ -187,7 +190,7 @@ export function StudentSearchPanel() {
             return <Badge variant="secondary">Inactive</Badge>;
           }
           if (atMaxSem) {
-            return <Badge variant="outline" className="border-amber-500 text-amber-600">Max Semester</Badge>;
+            return <Badge variant="outline" className="border-amber-500 text-amber-600">Last Semester</Badge>;
           }
           return <Badge className="bg-emerald-600 hover:bg-emerald-700">Active</Badge>;
         },
@@ -227,6 +230,29 @@ export function StudentSearchPanel() {
           );
         },
       },
+      {
+        id: "details",
+        header: "Details",
+        cell: ({ row }: { row: any }) => (
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon-sm"
+            onClick={(e) => {
+              e.stopPropagation();
+              row.toggleExpanded();
+            }}
+            aria-label={row.getIsExpanded() ? "Hide details" : "Show details"}
+            className="h-8 w-8 p-0"
+          >
+            {row.getIsExpanded() ? (
+              <ChevronDown className="h-4 w-4 text-emerald-600 dark:text-emerald-400" />
+            ) : (
+              <ChevronRight className="h-4 w-4 text-muted-foreground" />
+            )}
+          </Button>
+        ),
+      },
     ];
   }, [promoteMutation.isPending]);
 
@@ -242,6 +268,8 @@ export function StudentSearchPanel() {
     onRowSelectionChange: setRowSelection,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
+    getExpandedRowModel: getExpandedRowModel(),
+    getRowCanExpand: () => true,
     initialState: {
       pagination: {
         pageSize: 15,
@@ -487,19 +515,28 @@ export function StudentSearchPanel() {
               <TableBody>
                 {table.getRowModel().rows.length ? (
                   table.getRowModel().rows.map((row) => (
-                    <TableRow
-                      key={row.id}
-                      className="even:bg-muted/10 data-[state=selected]:bg-emerald-500/5 hover:bg-muted/5"
-                    >
-                      {row.getVisibleCells().map((cell) => (
-                        <TableCell key={cell.id}>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext(),
-                          )}
-                        </TableCell>
-                      ))}
-                    </TableRow>
+                    <Fragment key={row.id}>
+                      <TableRow
+                        className="even:bg-muted/10 data-[state=selected]:bg-emerald-500/5 hover:bg-muted/5 cursor-pointer"
+                        onClick={() => row.toggleExpanded()}
+                      >
+                        {row.getVisibleCells().map((cell) => (
+                          <TableCell key={cell.id}>
+                            {flexRender(
+                              cell.column.columnDef.cell,
+                              cell.getContext(),
+                            )}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                      {row.getIsExpanded() && (
+                        <TableRow className="hover:bg-transparent">
+                          <TableCell colSpan={columns.length} className="p-2">
+                            <StudentExpandedDetails student={row.original} />
+                          </TableCell>
+                        </TableRow>
+                      )}
+                    </Fragment>
                   ))
                 ) : (
                   <TableRow>
