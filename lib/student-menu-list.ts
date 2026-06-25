@@ -4,6 +4,7 @@ import {
   IconClipboardCheck,
   IconDashboard,
   IconFileText,
+  IconReceipt,
   IconUser,
 } from "@tabler/icons-react";
 import type { ComponentType } from "react";
@@ -36,6 +37,12 @@ export function getStudentMenuList(pathname: string): Group[] {
           label: "My Profile",
           icon: IconUser,
           active: pathname.startsWith("/student/profile"),
+        },
+        {
+          href: "/student/fee-history",
+          label: "Fee History",
+          icon: IconReceipt,
+          active: pathname.startsWith("/student/fee-history"),
         },
       ],
     },
