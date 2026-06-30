@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import {
+  getAdmissionsByDate,
   getFeeCollectionReport,
   getFilterOptions,
   getGlobalFeeStats,
@@ -58,6 +59,28 @@ export function useGlobalFeeStats(filter?: AdmissionDateFilter) {
       }
       return res.data;
     },
+    retry: false,
+  });
+}
+
+export function useAdmissionsByDate(filter: AdmissionDateFilter) {
+  const isDateSelected = filter.mode !== "all";
+
+  return useQuery({
+    queryKey: [
+      "admissions-by-date",
+      filter.mode,
+      filter.admissionDateFrom,
+      filter.admissionDateTo,
+    ],
+    queryFn: async () => {
+      const res = await getAdmissionsByDate(filter);
+      if (!res.success) {
+        throw new Error(res.message);
+      }
+      return res.data;
+    },
+    enabled: isDateSelected,
     retry: false,
   });
 }

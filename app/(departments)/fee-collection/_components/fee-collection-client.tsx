@@ -18,10 +18,12 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import {
+  useAdmissionsByDate,
   useFeeCollectionReport,
   useFilterOptions,
   useGlobalFeeStats,
 } from "../query/use-fee-collection";
+import { AdmissionDateTable } from "./admission-date-table";
 import { CollectionTable } from "./collection-table";
 
 type AdmissionDateMode = "all" | "date" | "range";
@@ -58,6 +60,7 @@ export function FeeCollectionClient() {
   };
 
   const { data: globalStats, isFetching: isFetchingStats } = useGlobalFeeStats(admissionDateFilter);
+  const { data: admissionsByDate, isLoading: isLoadingAdmissions } = useAdmissionsByDate(admissionDateFilter);
   const { data: courses, isLoading: isLoadingOptions } = useFilterOptions();
 
   const isAllCourses = selectedCourseId === "all";
@@ -243,6 +246,22 @@ export function FeeCollectionClient() {
             </CardContent>
           </Card>
         </div>
+
+        {/* Admissions by Date Table — shown only when date/range is selected */}
+        {admissionDateMode !== "all" && (
+          <div className="mb-8">
+            {isLoadingAdmissions ? (
+              <div className="flex flex-col items-center justify-center py-16 space-y-4">
+                <Loader2 className="h-8 w-8 animate-spin text-slate-400" />
+                <p className="text-sm text-slate-500 font-medium">
+                  Loading admissions...
+                </p>
+              </div>
+            ) : admissionsByDate ? (
+              <AdmissionDateTable students={admissionsByDate} />
+            ) : null}
+          </div>
+        )}
 
         <h1 className="text-2xl font-black mb-6 text-slate-800">
           Fee Collection Report

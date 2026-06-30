@@ -231,3 +231,37 @@ export async function getGlobalFeeStats(filter?: AdmissionDateFilter) {
     };
   }
 }
+
+export async function getAdmissionsByDate(filter: AdmissionDateFilter) {
+  try {
+    const session = await getAdminSession();
+    if (!session.success) {
+      return session;
+    }
+
+    if (filter.mode === "all") {
+      return { success: false, message: "Date filter is required" };
+    }
+
+    const admissionDateRange = getAdmissionDateRange(filter);
+
+    const students = await db.query.AdmittedStudentTable.findMany({
+      where: and(
+        gte(AdmittedStudentTable.createdAt, admissionDateRange.start),
+        lt(AdmittedStudentTable.createdAt, admissionDateRange.end),
+      ),
+      with: {
+        feePayments: true,
+      },
+      orderBy: (s, { asc }) => [asc(s.createdAt)],
+    });
+
+    return { success: true, data: students };
+  } catch (error) {
+    console.error("[getAdmissionsByDate] Error:", error);
+    return {
+      success: false,
+      message: getErrorMessage(error, "Failed to fetch admissions by date"),
+    };
+  }
+}
