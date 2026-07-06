@@ -11,6 +11,7 @@ const adminRoutes = [
   "/subjects",
   "/academic-session",
   "/admission-open",
+  "/fee-collection",
   "/tender",
 ];
 
@@ -34,6 +35,7 @@ const publicRoutes = [
   "/gallery",
   "/infrastructure",
   "/student-zone",
+  "/miscellaneous-payment",
 ];
 
 function isMatch(pathname: string, prefixes: string[]) {

@@ -277,7 +277,6 @@ export const admittedStudentRelations = relations(
       fields: [AdmittedStudentTable.batchId],
       references: [batchTable.id],
     }),
-
     previousAcademicRecord: one(StudentPreviousAcademicRecordTable),
 
     documents: one(StudentDocumentsTable),
