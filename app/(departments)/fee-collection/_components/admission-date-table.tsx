@@ -1,0 +1,203 @@
+"use client";
+
+import { useMemo } from "react";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+  TableFooter,
+} from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { IconDownload } from "@tabler/icons-react";
+
+interface AdmissionDateTableProps {
+  students: any[];
+}
+
+export function AdmissionDateTable({ students }: AdmissionDateTableProps) {
+  const totalFeeCollected = useMemo(() => {
+    let total = 0;
+    students.forEach((student) => {
+      const payment = student.feePayments?.[0];
+      if (payment) {
+        total += Number(payment.amount) || 0;
+      }
+    });
+    return total;
+  }, [students]);
+
+  const handleExportCSV = () => {
+    const headers = [
+      "S.No",
+      "College Roll",
+      "UAN",
+      "Student Name",
+      "Phone",
+      "Gender",
+      "Caste",
+      "Fee Paid",
+      "Payment Mode",
+      "Transaction ID",
+      "Payment Date",
+      "Admission Date",
+    ];
+
+    const rows = students.map((student, index) => {
+      const payment = student.feePayments?.[0];
+
+      return [
+        index + 1,
+        student.collegeRoll,
+        student.UAN,
+        `"${student.name}"`,
+        student.phone,
+        student.gender,
+        student.caste,
+        payment?.amount ?? 0,
+        payment?.paymentMode ?? "N/A",
+        payment?.transactionId ?? "N/A",
+        payment
+          ? new Date(payment.createdAt).toLocaleDateString("en-IN")
+          : "N/A",
+        new Date(student.createdAt).toLocaleDateString("en-IN"),
+      ].join(",");
+    });
+
+    const csvContent = [headers.join(","), ...rows].join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.href = url;
+    link.setAttribute(
+      "download",
+      `paid_admissions_report_${new Date().getTime()}.csv`,
+    );
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+
+  return (
+    <div className="space-y-4">
+      <div className="flex items-center justify-between">
+        <div>
+          <h2 className="text-lg font-bold text-slate-800">
+            Paid Admissions List
+          </h2>
+          <p className="text-sm text-slate-500">
+            {students.length} student{students.length !== 1 ? "s" : ""} — Fee
+            Collected: ₹{totalFeeCollected.toLocaleString("en-IN")}
+          </p>
+        </div>
+        <Button
+          onClick={handleExportCSV}
+          variant="outline"
+          className="gap-2"
+          disabled={students.length === 0}
+        >
+          <IconDownload size={16} />
+          Export to CSV
+        </Button>
+      </div>
+
+      <div className="border rounded-md bg-white">
+        <Table>
+          <TableHeader>
+            <TableRow>
+              <TableHead className="w-14">S.No</TableHead>
+              <TableHead>College Roll</TableHead>
+              <TableHead>Student Name</TableHead>
+              <TableHead>Phone</TableHead>
+              <TableHead>Gender</TableHead>
+              <TableHead>Fee Paid</TableHead>
+              <TableHead>Mode</TableHead>
+              <TableHead>Transaction ID</TableHead>
+              <TableHead>Payment Date</TableHead>
+              <TableHead>Admission Date</TableHead>
+            </TableRow>
+          </TableHeader>
+          <TableBody>
+            {students.length === 0 ? (
+              <TableRow>
+                <TableCell
+                  colSpan={10}
+                  className="text-center text-muted-foreground h-32"
+                >
+                  No paid admissions found for the selected date.
+                </TableCell>
+              </TableRow>
+            ) : (
+              students.map((student, index) => {
+                const payment = student.feePayments?.[0];
+
+                return (
+                  <TableRow key={student.id}>
+                    <TableCell className="text-sm text-slate-500">
+                      {index + 1}
+                    </TableCell>
+                    <TableCell className="font-mono text-sm">
+                      {student.collegeRoll}
+                    </TableCell>
+                    <TableCell className="font-medium">
+                      <div>{student.name}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {student.UAN}
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-sm">{student.phone}</TableCell>
+                    <TableCell>
+                      <Badge variant="outline" className="text-xs">
+                        {student.gender}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="font-semibold text-emerald-700">
+                      {payment
+                        ? `₹${Number(payment.amount).toLocaleString("en-IN")}`
+                        : "-"}
+                    </TableCell>
+                    <TableCell className="text-sm">
+                      {payment?.paymentMode ?? "-"}
+                    </TableCell>
+                    <TableCell className="font-mono text-xs">
+                      {payment?.transactionId ?? "-"}
+                    </TableCell>
+                    <TableCell className="text-sm">
+                      {payment
+                        ? new Date(payment.createdAt).toLocaleDateString(
+                            "en-IN",
+                          )
+                        : "-"}
+                    </TableCell>
+                    <TableCell className="text-sm">
+                      {new Date(student.createdAt).toLocaleDateString("en-IN")}
+                    </TableCell>
+                  </TableRow>
+                );
+              })
+            )}
+          </TableBody>
+          {students.length > 0 && (
+            <TableFooter>
+              <TableRow className="bg-slate-50/70">
+                <TableCell
+                  colSpan={5}
+                  className="font-bold text-slate-800 text-right pr-4"
+                >
+                  Total (Students: {students.length})
+                </TableCell>
+                <TableCell className="font-bold text-emerald-800">
+                  ₹{totalFeeCollected.toLocaleString("en-IN")}
+                </TableCell>
+                <TableCell colSpan={4} />
+              </TableRow>
+            </TableFooter>
+          )}
+        </Table>
+      </div>
+    </div>
+  );
+}

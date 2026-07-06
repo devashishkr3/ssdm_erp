@@ -30,12 +30,6 @@ export function getMenuList(pathname: string): Group[] {
       groupLabel: "Academic Setup",
       menus: [
         {
-          href: "/college",
-          label: "Colleges",
-          icon: IconSchool,
-          active: pathname.startsWith("/college"),
-        },
-        {
           href: "/department",
           label: "Departments",
           icon: IconHierarchy2,
@@ -77,6 +71,12 @@ export function getMenuList(pathname: string): Group[] {
           label: "Verify Payment",
           icon: IconUserCheck,
           active: pathname.startsWith("/verify/payment"),
+        },
+        {
+          href: "/fee-collection",
+          label: "Fee Collection",
+          icon: IconClipboardCheck,
+          active: pathname.startsWith("/fee-collection"),
         },
         {
           href: "/tender",
