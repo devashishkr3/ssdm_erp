@@ -152,6 +152,12 @@ export default async function Page() {
                 Apply for Admission 2026-27
               </Link>
               <Link
+                href="/auth/signin"
+                className="w-full sm:w-auto px-8 py-4 rounded-xl text-sm font-bold bg-gradient-to-r from-blue-600 to-indigo-600 text-white hover:from-blue-500 hover:to-indigo-500 shadow-lg shadow-blue-500/25 hover:shadow-blue-500/40 hover:-translate-y-0.5 transition-all text-center"
+              >
+                Admission for semester 7th
+              </Link>
+              <Link
                 href="#about"
                 className="w-full sm:w-auto px-8 py-4 rounded-xl text-sm font-bold bg-white/10 text-white border border-white/20 hover:bg-white/15 backdrop-blur-sm transition-all text-center"
               >
@@ -289,6 +295,26 @@ export default async function Page() {
                           </p>
                           <p className="text-[10px] text-slate-400">
                             Access departmental ERP and management portal
+                          </p>
+                        </div>
+                      </div>
+                      <ChevronRight className="h-4 w-4 text-slate-400 group-hover:translate-x-1 transition-transform" />
+                    </Link>
+
+                    <Link
+                      href="/auth/signin"
+                      className="group flex items-center justify-between p-3.5 bg-white border border-slate-200 hover:border-blue-900 rounded-xl transition-all shadow-sm"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className="p-2.5 rounded-lg bg-orange-50 text-orange-700 group-hover:bg-orange-100 transition-colors">
+                          <BookOpen className="h-5 w-5" />
+                        </div>
+                        <div>
+                          <p className="text-xs font-bold text-slate-800">
+                            Admission for Sem-VII
+                          </p>
+                          <p className="text-[10px] text-slate-400">
+                            Login for semester VII admission process
                           </p>
                         </div>
                       </div>
