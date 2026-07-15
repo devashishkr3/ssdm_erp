@@ -188,17 +188,6 @@ export async function completeStudentProfile(payload: CompleteProfileSchema) {
           updatedAt: new Date(),
         })
         .where(eq(AdmittedStudentTable.id, student.id));
-
-      // 2. Update auth user table if the email was changed
-      if (newEmail !== oldEmail) {
-        await tx
-          .update(user)
-          .set({
-            email: newEmail,
-            emailVerified: true,
-          })
-          .where(eq(user.email, oldEmail));
-      }
     });
 
     return {

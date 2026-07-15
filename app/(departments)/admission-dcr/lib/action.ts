@@ -10,9 +10,32 @@ import {
   departmentTable,
   StudentFeePaymentTable,
 } from "@/lib/db/schema";
+import { auth } from "@/lib/auth";
+import { headers } from "next/headers";
+
+
+async function getAdminSession() {
+  const session = await auth.api.getSession({ headers: await headers() });
+
+  if (!session) {
+    return { success: false as const, message: "Unauthorized" };
+  }
+
+  if (session.user.role !== "admin" && session.user.role !== "superAdmin") {
+    return { success: false as const, message: "Forbidden" };
+  }
+
+  return { success: true as const, data: session };
+}
 
 export async function getDCRStats() {
   try {
+
+    const session = await getAdminSession();
+    if (!session.success) {
+      return session;
+    }
+
     const now = new Date();
     const startOfToday = new Date(
       now.getFullYear(),
@@ -52,13 +75,12 @@ export async function getDCRStats() {
       999,
     );
 
-    // Today's admission payments (semesterCount = 1, Success status)
+    // Today's payments (all semesters, Success status)
     const todayResult = await db
       .select({ amount: StudentFeePaymentTable.amount })
       .from(StudentFeePaymentTable)
       .where(
         and(
-          eq(StudentFeePaymentTable.semesterCount, 1),
           eq(StudentFeePaymentTable.status, "Success"),
           gte(StudentFeePaymentTable.createdAt, startOfToday),
           lte(StudentFeePaymentTable.createdAt, endOfToday),
@@ -71,13 +93,12 @@ export async function getDCRStats() {
     );
     const todayCount = todayResult.length;
 
-    // This Month's admission payments (semesterCount = 1, Success status)
+    // This Month's payments (all semesters, Success status)
     const monthResult = await db
       .select({ amount: StudentFeePaymentTable.amount })
       .from(StudentFeePaymentTable)
       .where(
         and(
-          eq(StudentFeePaymentTable.semesterCount, 1),
           eq(StudentFeePaymentTable.status, "Success"),
           gte(StudentFeePaymentTable.createdAt, startOfMonth),
           lte(StudentFeePaymentTable.createdAt, endOfMonth),
@@ -90,16 +111,11 @@ export async function getDCRStats() {
     );
     const monthCount = monthResult.length;
 
-    // Total admission payments (semesterCount = 1, Success status)
+    // Total payments (all semesters, Success status)
     const totalResult = await db
       .select({ amount: StudentFeePaymentTable.amount })
       .from(StudentFeePaymentTable)
-      .where(
-        and(
-          eq(StudentFeePaymentTable.semesterCount, 1),
-          eq(StudentFeePaymentTable.status, "Success"),
-        ),
-      );
+      .where(eq(StudentFeePaymentTable.status, "Success"));
 
     const totalAmount = totalResult.reduce(
       (sum, p) => sum + Number(p.amount),
@@ -135,20 +151,23 @@ export interface DCRFilters {
 
 export async function getDCRReport(filters: DCRFilters = {}) {
   try {
+
+    const session = await getAdminSession();
+    if (!session.success) {
+      return session;
+    }
+
+
     const { startDate, endDate, semester, departmentId, courseId, batchId } =
       filters;
 
     const conditions = [eq(StudentFeePaymentTable.status, "Success")];
 
-    // By default, if no semester filter is specified, we fetch Semester 1 (which represents Admission Fee)
-    const activeSemester =
-      semester && semester !== "all"
-        ? Number(semester)
-        : semester === "all"
-          ? null
-          : 1;
-    if (activeSemester !== null) {
-      conditions.push(eq(StudentFeePaymentTable.semesterCount, activeSemester));
+    // Only filter by semester when a specific semester is selected
+    if (semester && semester !== "all") {
+      conditions.push(
+        eq(StudentFeePaymentTable.semesterCount, Number(semester)),
+      );
     }
 
     if (startDate) {
@@ -226,6 +245,13 @@ export async function getDCRReport(filters: DCRFilters = {}) {
 
 export async function getDCRFilterOptions() {
   try {
+
+    const session = await getAdminSession();
+    if (!session.success) {
+      return session;
+    }
+
+
     const departments = await db
       .select({ id: departmentTable.id, name: departmentTable.name })
       .from(departmentTable);

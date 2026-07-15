@@ -35,7 +35,7 @@ export function MainSigninForm() {
     const isEmail = rawIdentifier.includes("@");
     const email = isEmail
       ? rawIdentifier
-      : `${rawIdentifier.toLowerCase()}@student.ssdm.local`;
+      : `${rawIdentifier.replace(/[^a-zA-Z0-9]/g, "").toLowerCase()}@student.ssdm.local`;
 
     const { data: authData, error } = await signIn.email({
       email,
@@ -63,7 +63,7 @@ export function MainSigninForm() {
   return (
     <div className="flex min-h-svh w-full items-center justify-center p-6 md:p-10">
       <div className="w-full max-w-xl space-y-4">
-        {/* <Alert className="border-blue-200 bg-blue-50">
+        <Alert className="border-blue-200 bg-blue-50">
           <Info className="h-4 w-4 text-blue-600" />
           <AlertTitle className="text-blue-800 font-semibold">
             Login Hint / लॉगिन संकेत
@@ -82,7 +82,7 @@ export function MainSigninForm() {
               स्पेस) + <strong>विश्वविद्यालय रोल नं. के अंतिम 4 अंक</strong>
             </p>
           </AlertDescription>
-        </Alert> */}
+        </Alert>
 
         <Card>
           <CardHeader>
